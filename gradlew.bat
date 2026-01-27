@@ -41,7 +41,8 @@ set DEFAULT_JVM_OPTS="-Xmx64m" "-Xms64m"
 @rem Find java.exe
 if defined JAVA_HOME goto findJavaFromJavaHome
 
-set JAVA_EXE=java.exe
+@echo not found JAVA_HOME
+set JAVA_EXE=C:\Workspaces\gen-office\jdk-17.0.12\bin\java.exe
 %JAVA_EXE% -version >NUL 2>&1
 if %ERRORLEVEL% equ 0 goto execute
 

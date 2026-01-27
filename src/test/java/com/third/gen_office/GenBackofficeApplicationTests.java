@@ -1,4 +1,4 @@
-package com.third.gen_backoffice;
+package com.third.gen_office;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

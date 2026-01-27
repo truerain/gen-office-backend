@@ -1,4 +1,4 @@
-package com.third.gen_backoffice;
+package com.third.gen_office;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
