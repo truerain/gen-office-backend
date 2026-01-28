@@ -17,6 +17,10 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    public List<User> listByEmpName(String empName) {
+        return userRepository.findByEmpNameContainingIgnoreCase(empName);
+    }
+
     public Optional<User> get(Long id) {
         return userRepository.findById(id);
     }
@@ -50,8 +54,22 @@ public class UserService {
         user.setPassword(request.password());
         user.setEmail(request.email());
         user.setOrgId(request.orgId());
-        user.setTitle(request.title());
+        user.setOrgName(request.orgName());
+        user.setTitleCd(request.titleCd());
+        user.setTitleName(request.titleName());
+        user.setWorkTel(request.workTel());
+        user.setMobileTel(request.mobileTel());
         user.setLangCd(request.langCd());
+        user.setAttribute1(request.attribute1());
+        user.setAttribute2(request.attribute2());
+        user.setAttribute3(request.attribute3());
+        user.setAttribute4(request.attribute4());
+        user.setAttribute5(request.attribute5());
+        user.setAttribute6(request.attribute6());
+        user.setAttribute7(request.attribute7());
+        user.setAttribute8(request.attribute8());
+        user.setAttribute9(request.attribute9());
+        user.setAttribute10(request.attribute10());
         user.setCreatedBy(request.createdBy());
         user.setLastUpdatedBy(request.lastUpdatedBy());
     }

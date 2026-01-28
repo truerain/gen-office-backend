@@ -29,11 +29,34 @@ public class User {
     @Column(name = "org_id", nullable = false)
     private String orgId;
 
-    @Column(name = "title")
-    private String title;
+    @Column(name = "org_name")
+    private String orgName;
+
+    @Column(name = "title_cd")
+    private String titleCd;
+
+    @Column(name = "title_name")
+    private String titleName;
+
+    @Column(name = "work_tel")
+    private String workTel;
+
+    @Column(name = "mobile_tel")
+    private String mobileTel;
 
     @Column(name = "lang_cd", nullable = false)
     private String langCd;
+
+    private String attribute1;
+    private String attribute2;
+    private String attribute3;
+    private String attribute4;
+    private String attribute5;
+    private String attribute6;
+    private String attribute7;
+    private String attribute8;
+    private String attribute9;
+    private String attribute10;
 
     @Column(name = "created_by")
     private String createdBy;
@@ -98,12 +121,44 @@ public class User {
         this.orgId = orgId;
     }
 
-    public String getTitle() {
-        return title;
+    public String getOrgName() {
+        return orgName;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
+    }
+
+    public String getTitleCd() {
+        return titleCd;
+    }
+
+    public void setTitleCd(String titleCd) {
+        this.titleCd = titleCd;
+    }
+
+    public String getTitleName() {
+        return titleName;
+    }
+
+    public void setTitleName(String titleName) {
+        this.titleName = titleName;
+    }
+
+    public String getWorkTel() {
+        return workTel;
+    }
+
+    public void setWorkTel(String workTel) {
+        this.workTel = workTel;
+    }
+
+    public String getMobileTel() {
+        return mobileTel;
+    }
+
+    public void setMobileTel(String mobileTel) {
+        this.mobileTel = mobileTel;
     }
 
     public String getLangCd() {
@@ -112,6 +167,86 @@ public class User {
 
     public void setLangCd(String langCd) {
         this.langCd = langCd;
+    }
+
+    public String getAttribute1() {
+        return attribute1;
+    }
+
+    public void setAttribute1(String attribute1) {
+        this.attribute1 = attribute1;
+    }
+
+    public String getAttribute2() {
+        return attribute2;
+    }
+
+    public void setAttribute2(String attribute2) {
+        this.attribute2 = attribute2;
+    }
+
+    public String getAttribute3() {
+        return attribute3;
+    }
+
+    public void setAttribute3(String attribute3) {
+        this.attribute3 = attribute3;
+    }
+
+    public String getAttribute4() {
+        return attribute4;
+    }
+
+    public void setAttribute4(String attribute4) {
+        this.attribute4 = attribute4;
+    }
+
+    public String getAttribute5() {
+        return attribute5;
+    }
+
+    public void setAttribute5(String attribute5) {
+        this.attribute5 = attribute5;
+    }
+
+    public String getAttribute6() {
+        return attribute6;
+    }
+
+    public void setAttribute6(String attribute6) {
+        this.attribute6 = attribute6;
+    }
+
+    public String getAttribute7() {
+        return attribute7;
+    }
+
+    public void setAttribute7(String attribute7) {
+        this.attribute7 = attribute7;
+    }
+
+    public String getAttribute8() {
+        return attribute8;
+    }
+
+    public void setAttribute8(String attribute8) {
+        this.attribute8 = attribute8;
+    }
+
+    public String getAttribute9() {
+        return attribute9;
+    }
+
+    public void setAttribute9(String attribute9) {
+        this.attribute9 = attribute9;
+    }
+
+    public String getAttribute10() {
+        return attribute10;
+    }
+
+    public void setAttribute10(String attribute10) {
+        this.attribute10 = attribute10;
     }
 
     public String getCreatedBy() {
