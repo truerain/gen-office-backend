@@ -64,3 +64,30 @@ CREATE TABLE IF NOT EXISTS "menu" (
     last_updated_by TEXT
 );
 
+CREATE TABLE IF NOT EXISTS "tb_cm_message" (
+    message_cd TEXT NOT NULL,
+    lang_cd TEXT NOT NULL,
+    namespace TEXT NOT NULL,
+    message_txt TEXT NOT NULL,
+    attribute1 TEXT,
+    attribute2 TEXT,
+    attribute3 TEXT,
+    attribute4 TEXT,
+    attribute5 TEXT,
+    attribute6 TEXT,
+    attribute7 TEXT,
+    attribute8 TEXT,
+    attribute9 TEXT,
+    attribute10 TEXT,
+    created_by TEXT,
+    creation_date TEXT DEFAULT CURRENT_TIMESTAMP,
+    last_updated_by TEXT,
+    last_updated_date TEXT DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (message_cd, lang_cd, namespace)
+);
+
+CREATE INDEX IF NOT EXISTS idx_tb_cm_message_ns_cd_lang
+    ON tb_cm_message (namespace, message_cd, lang_cd);
+
+CREATE INDEX IF NOT EXISTS idx_tb_cm_message_lang
+    ON tb_cm_message (lang_cd);

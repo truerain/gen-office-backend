@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+import com.third.gen_office.global.error.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,10 +34,10 @@ public class MenuController {
 
     @GetMapping("/{id}")
     @Operation(summary = "메뉴 단건 조회")
-    public ResponseEntity<Menu> get(@Parameter(description = "메뉴 ID") @PathVariable Long id) {
-        return menuService.get(id)
-            .map(ResponseEntity::ok)
-            .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<Menu> get(@Parameter(description = "menu id") @PathVariable Long id) {
+        Menu menu = menuService.get(id)
+            .orElseThrow(() -> new NotFoundException("menu.not_found"));
+        return ResponseEntity.ok(menu);
     }
 
     @PostMapping
@@ -48,19 +49,20 @@ public class MenuController {
     @PutMapping("/{id}")
     @Operation(summary = "메뉴 수정")
     public ResponseEntity<Menu> update(
-        @Parameter(description = "메뉴 ID") @PathVariable Long id,
+        @Parameter(description = "menu id") @PathVariable Long id,
         @RequestBody MenuRequest request
     ) {
-        return menuService.update(id, request)
-            .map(ResponseEntity::ok)
-            .orElseGet(() -> ResponseEntity.notFound().build());
+        Menu menu = menuService.update(id, request)
+            .orElseThrow(() -> new NotFoundException("menu.not_found"));
+        return ResponseEntity.ok(menu);
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "메뉴 삭제")
-    public ResponseEntity<Void> delete(@Parameter(description = "메뉴 ID") @PathVariable Long id) {
-        return menuService.delete(id)
-            ? ResponseEntity.noContent().build()
-            : ResponseEntity.notFound().build();
+    public ResponseEntity<Void> delete(@Parameter(description = "menu id") @PathVariable Long id) {
+        if (!menuService.delete(id)) {
+            throw new NotFoundException("menu.not_found");
+        }
+        return ResponseEntity.noContent().build();
     }
 }

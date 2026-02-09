@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+import com.third.gen_office.global.error.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -39,10 +40,10 @@ public class UserController {
 
     @GetMapping("/{id}")
     @Operation(summary = "사용자 단건 조회")
-    public ResponseEntity<User> get(@Parameter(description = "사용자 ID") @PathVariable Long id) {
-        return userService.get(id)
-            .map(ResponseEntity::ok)
-            .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<User> get(@Parameter(description = "user id") @PathVariable Long id) {
+        User user = userService.get(id)
+            .orElseThrow(() -> new NotFoundException("user.not_found"));
+        return ResponseEntity.ok(user);
     }
 
     @PostMapping
@@ -54,19 +55,20 @@ public class UserController {
     @PutMapping("/{id}")
     @Operation(summary = "사용자 수정")
     public ResponseEntity<User> update(
-        @Parameter(description = "사용자 ID") @PathVariable Long id,
+        @Parameter(description = "user id") @PathVariable Long id,
         @RequestBody UserRequest request
     ) {
-        return userService.update(id, request)
-            .map(ResponseEntity::ok)
-            .orElseGet(() -> ResponseEntity.notFound().build());
+        User user = userService.update(id, request)
+            .orElseThrow(() -> new NotFoundException("user.not_found"));
+        return ResponseEntity.ok(user);
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "사용자 삭제")
-    public ResponseEntity<Void> delete(@Parameter(description = "사용자 ID") @PathVariable Long id) {
-        return userService.delete(id)
-            ? ResponseEntity.noContent().build()
-            : ResponseEntity.notFound().build();
+    public ResponseEntity<Void> delete(@Parameter(description = "user id") @PathVariable Long id) {
+        if (!userService.delete(id)) {
+            throw new NotFoundException("user.not_found");
+        }
+        return ResponseEntity.noContent().build();
     }
 }
