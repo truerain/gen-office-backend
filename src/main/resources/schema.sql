@@ -64,6 +64,26 @@ CREATE TABLE IF NOT EXISTS "menu" (
     last_updated_by TEXT
 );
 
+CREATE TABLE IF NOT EXISTS "role" (
+    role_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    role_cd TEXT NOT NULL UNIQUE,
+    role_name TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS "user_role" (
+    user_id INTEGER NOT NULL,
+    role_id INTEGER NOT NULL,
+    PRIMARY KEY (user_id, role_id),
+    FOREIGN KEY (user_id) REFERENCES "user"(user_id),
+    FOREIGN KEY (role_id) REFERENCES "role"(role_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_user_role_user_id
+    ON user_role (user_id);
+
+CREATE INDEX IF NOT EXISTS idx_user_role_role_id
+    ON user_role (role_id);
+
 CREATE TABLE IF NOT EXISTS "tb_cm_message" (
     message_cd TEXT NOT NULL,
     lang_cd TEXT NOT NULL,

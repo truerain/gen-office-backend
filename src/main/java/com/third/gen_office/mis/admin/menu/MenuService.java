@@ -1,6 +1,7 @@
 package com.third.gen_office.mis.admin.menu;
 
-import com.third.gen_office.mis.admin.menu.dao.MenuRepository;
+import com.third.gen_office.domain.menu.Menu;
+import com.third.gen_office.domain.menu.MenuRepository;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,8 @@ public class MenuService {
         return menuRepository.findAll();
     }
 
+    public List<Menu> chiidlMenu(Long id) { return menuRepository.findByPrntMenuId(id); }
+
     public Optional<Menu> get(Long id) {
         return menuRepository.findById(id);
     }
@@ -24,6 +27,7 @@ public class MenuService {
     public Menu create(MenuRequest request) {
         Menu menu = new Menu();
         applyRequest(menu, request);
+        menu.setMenuId(request.menuId());
         return menuRepository.save(menu);
     }
 
@@ -44,7 +48,6 @@ public class MenuService {
     }
 
     private void applyRequest(Menu menu, MenuRequest request) {
-        menu.setMenuId(request.menuId());
         menu.setMenuName(request.menuName());
         menu.setMenuNameEng(request.menuNameEng());
         menu.setMenuDesc(request.menuDesc());

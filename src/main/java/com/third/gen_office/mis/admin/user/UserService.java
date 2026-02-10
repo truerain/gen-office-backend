@@ -3,14 +3,17 @@ package com.third.gen_office.mis.admin.user;
 import java.util.List;
 import java.util.Optional;
 import com.third.gen_office.mis.admin.user.dao.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<User> list() {
@@ -51,7 +54,9 @@ public class UserService {
         user.setEmpNo(request.empNo());
         user.setEmpName(request.empName());
         user.setEmpNameEng(request.empNameEng());
-        user.setPassword(request.password());
+        if (request.password() != null && !request.password().isBlank()) {
+            user.setPassword(passwordEncoder.encode(request.password()));
+        }
         user.setEmail(request.email());
         user.setOrgId(request.orgId());
         user.setOrgName(request.orgName());

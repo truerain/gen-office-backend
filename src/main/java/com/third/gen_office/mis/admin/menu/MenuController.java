@@ -1,10 +1,13 @@
 package com.third.gen_office.mis.admin.menu;
 
+import com.third.gen_office.domain.menu.Menu;
+import com.third.gen_office.global.error.NotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
-import com.third.gen_office.global.error.NotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,6 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/menus")
 public class MenuController {
+    private static final Logger log = LoggerFactory.getLogger(MenuController.class);
+
     private final MenuService menuService;
 
     public MenuController(MenuService menuService) {
@@ -32,9 +37,14 @@ public class MenuController {
         return menuService.list();
     }
 
+    @GetMapping("/submenu/{id}")
+    @Operation(summary = "하위 메뉴 목록 조회")
+    public List<Menu> childMenu(@Parameter(description = "상위 메뉴 ID") @PathVariable Long id) {
+        return menuService.chiidlMenu(id);
+    }
     @GetMapping("/{id}")
     @Operation(summary = "메뉴 단건 조회")
-    public ResponseEntity<Menu> get(@Parameter(description = "menu id") @PathVariable Long id) {
+    public ResponseEntity<Menu> get(@Parameter(description = "메뉴 ID") @PathVariable Long id) {
         Menu menu = menuService.get(id)
             .orElseThrow(() -> new NotFoundException("menu.not_found"));
         return ResponseEntity.ok(menu);
@@ -49,7 +59,7 @@ public class MenuController {
     @PutMapping("/{id}")
     @Operation(summary = "메뉴 수정")
     public ResponseEntity<Menu> update(
-        @Parameter(description = "menu id") @PathVariable Long id,
+        @Parameter(description = "메뉴 ID") @PathVariable Long id,
         @RequestBody MenuRequest request
     ) {
         Menu menu = menuService.update(id, request)
@@ -59,7 +69,7 @@ public class MenuController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "메뉴 삭제")
-    public ResponseEntity<Void> delete(@Parameter(description = "menu id") @PathVariable Long id) {
+    public ResponseEntity<Void> delete(@Parameter(description = "메뉴 ID") @PathVariable Long id) {
         if (!menuService.delete(id)) {
             throw new NotFoundException("menu.not_found");
         }

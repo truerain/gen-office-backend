@@ -1,3 +1,22 @@
+## 기본사항 
+1. 임시로그인  http://localhost:8080/tmp-login?empNo=admin&password=1234
+2. API DOC   http://localhost:8080/scalar
+
+
+## 적용 기술 스택
+1. Scalar : 차세대 API 레퍼런스 가이드입니다.  
+            디자인: 매우 깔끔하고 반응형 인터페이스를 제공합니다.  
+            성능: 대규모 API 명세서도 Swagger보다 훨씬 빠르게 렌더링합니다.  
+            통합 테스트: 브라우저 내에서 바로 API를 호출해볼 수 있는 'Playground' 기능이 매우 직관적입니다.  
+   - 특징
+      - Spring Doc 기반: springdoc-openapi의 설정을 그대로 따릅니다. 즉, 기존에 사용하던 @Operation, @Schema 같은 어노테이션을 수정할 필요가 없습니다.  
+      - 다양한 테마: 다크 모드를 포함해 여러 가지 테마를 기본으로 제공합니다.  
+      - 코드 스니펫: 다양한 프로그래밍 언어(Java, Python, JS, cURL 등)로 API를 호출하는 코드를 즉시 생성해 줍니다.  
+      - 검색 기능: API가 많아도 강력한 검색 기능을 통해 원하는 엔드포인트를 즉시 찾을 수 있습니다.  
+
+
+
+
 ### 관리회계 도메인에 특화된 최신 스택을 정리해 드릴게요.
 
 1. API 관리 및 설계 트렌드
@@ -9,16 +28,12 @@
 
 2. 관리회계 특화 백엔드 전략
    관리회계는 특히 **'숫자'**와 '동적 조건' 처리가 중요합니다.
-
 - QueryDSL (필수): 앞서 말씀드렸듯, 관리회계의 수많은 필터 조건(부서별, 기간별, 항목별 등)을 처리하기 위해 동적 쿼리 작성이 필수입니다.
-
 - BigDecimal & Precision: 금액 계산 시 오차를 방지하기 위해 BigDecimal 사용은 기본이며, DB의 precision과 scale을 엄격히 관리하는 것이 트렌드입니다.
-
 - Batch Processing: 월말 결산이나 대량 전표 처리를 위해 Spring Batch 5.x와 **가상 스레드(Virtual Threads)**를 조합하여 성능을 극대화합니다.
-
 - Audit Logging: 회계 데이터는 "누가, 언제, 무엇을" 바꿨는지 남기는 것이 중요합니다. Envers나 Spring Data JPA Audit을 통해 변경 이력을 자동화합니다.
-
-3. 화면(Front-end) 및 UI 트렌드
+3. 
+4. 화면(Front-end) 및 UI 트렌드
    관리회계 백오피스는 **"데이터 그리드"**가 곧 서비스의 전부라고 해도 과언이 아닙니다.
 
 - TanStack Table (React Table): Headless UI 라이브러리로, 관리회계에 필요한 복잡한 정렬, 필터링, 피벗 기능을 커스텀하게 구현할 때 가장 많이 쓰입니다.
