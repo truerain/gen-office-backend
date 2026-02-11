@@ -39,6 +39,7 @@ public class SecurityConfig {
                         "/api/i18n",
                         "/api/auth/login",
                         "/api/auth/tmp-login",
+                        "/api/auth/me",
                         "/api/auth/csrf"
                 ).permitAll()
                 .anyRequest().authenticated())

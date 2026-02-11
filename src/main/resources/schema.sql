@@ -67,12 +67,70 @@ CREATE TABLE IF NOT EXISTS "menu" (
 CREATE TABLE IF NOT EXISTS "role" (
     role_id INTEGER PRIMARY KEY AUTOINCREMENT,
     role_cd TEXT NOT NULL UNIQUE,
-    role_name TEXT NOT NULL
+    role_name TEXT NOT NULL,
+    role_name_eng TEXT NOT NULL,
+    role_desc TEXT,
+    sort_order INTEGER,
+    use_yn TEXT CHECK (use_yn IN ('Y','N')),
+    attribute1 TEXT,
+    attribute2 TEXT,
+    attribute3 TEXT,
+    attribute4 TEXT,
+    attribute5 TEXT,
+    attribute6 TEXT,
+    attribute7 TEXT,
+    attribute8 TEXT,
+    attribute9 TEXT,
+    attribute10 TEXT,
+    creation_date TEXT DEFAULT CURRENT_TIMESTAMP,
+    created_by TEXT,
+    last_updated_date TEXT DEFAULT CURRENT_TIMESTAMP,
+    last_updated_by TEXT
 );
+
+CREATE TABLE IF NOT EXISTS "role_menu" (
+    role_id INTEGER NOT NULL,
+    menu_id INTEGER NOT NULL,
+    use_yn TEXT CHECK (use_yn IN ('Y','N')),
+    attribute1 TEXT,
+    attribute2 TEXT,
+    attribute3 TEXT,
+    attribute4 TEXT,
+    attribute5 TEXT,
+    attribute6 TEXT,
+    attribute7 TEXT,
+    attribute8 TEXT,
+    attribute9 TEXT,
+    attribute10 TEXT,
+    creation_date TEXT DEFAULT CURRENT_TIMESTAMP,
+    created_by TEXT,
+    last_updated_date TEXT DEFAULT CURRENT_TIMESTAMP,
+    last_updated_by TEXT,
+    PRIMARY KEY (role_id, menu_id),
+    FOREIGN KEY (role_id) REFERENCES "role"(role_id),
+    FOREIGN KEY (menu_id) REFERENCES "menu"(menu_id)
+);
+CREATE INDEX IF NOT EXISTS idx_role_menu_role_id ON role_menu (role_id);
+CREATE INDEX IF NOT EXISTS idx_role_menu_menu_id ON role_menu (menu_id);
 
 CREATE TABLE IF NOT EXISTS "user_role" (
     user_id INTEGER NOT NULL,
     role_id INTEGER NOT NULL,
+    use_yn TEXT CHECK (use_yn IN ('Y','N')),
+    attribute1 TEXT,
+    attribute2 TEXT,
+    attribute3 TEXT,
+    attribute4 TEXT,
+    attribute5 TEXT,
+    attribute6 TEXT,
+    attribute7 TEXT,
+    attribute8 TEXT,
+    attribute9 TEXT,
+    attribute10 TEXT,
+    creation_date TEXT DEFAULT CURRENT_TIMESTAMP,
+    created_by TEXT,
+    last_updated_date TEXT DEFAULT CURRENT_TIMESTAMP,
+    last_updated_by TEXT,
     PRIMARY KEY (user_id, role_id),
     FOREIGN KEY (user_id) REFERENCES "user"(user_id),
     FOREIGN KEY (role_id) REFERENCES "role"(role_id)

@@ -21,6 +21,7 @@ public class CsrfDebugLoggingFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
         String headerToken = request.getHeader("X-XSRF-TOKEN");
         String cookieToken = findCookieValue(request.getCookies(), "XSRF-TOKEN");
+
         log.info("csrf_check method={} path={} headerToken={} cookieToken={}",
             request.getMethod(),
             request.getRequestURI(),
