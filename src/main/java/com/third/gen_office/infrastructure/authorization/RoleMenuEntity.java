@@ -7,7 +7,7 @@ import jakarta.persistence.IdClass;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "role_menu")
+@Table(name = "tb_cm_role_menu")
 @IdClass(RoleMenuId.class)
 public class RoleMenuEntity {
     @Id
@@ -17,6 +17,9 @@ public class RoleMenuEntity {
     @Id
     @Column(name = "menu_id")
     private Long menuId;
+
+    @Column(name = "use_yn")
+    private String useYn;
 
     public Long getRoleId() {
         return roleId;
@@ -32,5 +35,13 @@ public class RoleMenuEntity {
 
     public void setMenuId(Long menuId) {
         this.menuId = menuId;
+    }
+
+    public String getUseYn() {
+        return useYn;
+    }
+
+    public void setUseYn(String useYn) {
+        this.useYn = useYn;
     }
 }

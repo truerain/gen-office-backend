@@ -29,16 +29,20 @@ public class RoleMenuService {
         return roleMenuRepository.findById(new RoleMenuId(roleId, menuId));
     }
 
+    public List<RoleMenuView> listByRole(Long roleId) {
+        return roleMenuRepository.findRoleMenuViewByRoleId(roleId);
+    }
+
     public Optional<RoleMenuEntity> create(RoleMenuRequest request) {
         if (request.roleId() == null || request.menuId() == null) {
             return Optional.empty();
         }
-        if (roleMenuRepository.existsByRoleIdAndMenuId(request.roleId(), request.menuId())) {
-            return roleMenuRepository.findById(new RoleMenuId(request.roleId(), request.menuId()));
-        }
-        RoleMenuEntity entity = new RoleMenuEntity();
+        RoleMenuEntity entity = roleMenuRepository
+            .findById(new RoleMenuId(request.roleId(), request.menuId()))
+            .orElseGet(RoleMenuEntity::new);
         entity.setRoleId(request.roleId());
         entity.setMenuId(request.menuId());
+        entity.setUseYn(request.useYn());
         return Optional.of(roleMenuRepository.save(entity));
     }
 

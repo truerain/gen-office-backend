@@ -47,6 +47,14 @@ public class RoleMenuController {
         return ResponseEntity.ok(roleMenu);
     }
 
+    @GetMapping("/view/{roleId}")
+    @Operation(summary = "List menus with role mapping")
+    public List<RoleMenuView> listByRole(
+        @Parameter(description = "role id") @PathVariable Long roleId
+    ) {
+        return roleMenuService.listByRole(roleId);
+    }
+
     @PostMapping
     @Operation(summary = "Create role menu mapping")
     public ResponseEntity<RoleMenuEntity> create(@RequestBody RoleMenuRequest request) {

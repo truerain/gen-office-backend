@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS tb_cm_menu(
     last_updated_by TEXT
 );
 
-CREATE TABLE IF NOT EXISTS "role" (
+CREATE TABLE IF NOT EXISTS "tb_cm_role" (
     role_id INTEGER PRIMARY KEY AUTOINCREMENT,
     role_cd TEXT NOT NULL UNIQUE,
     role_name TEXT NOT NULL,
@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS "role" (
     last_updated_by TEXT
 );
 
-CREATE TABLE IF NOT EXISTS "role_menu" (
+CREATE TABLE IF NOT EXISTS "tb_cm_role_menu" (
     role_id INTEGER NOT NULL,
     menu_id INTEGER NOT NULL,
     use_yn TEXT CHECK (use_yn IN ('Y','N')),
@@ -100,11 +100,11 @@ CREATE TABLE IF NOT EXISTS "role_menu" (
     last_updated_date TEXT DEFAULT CURRENT_TIMESTAMP,
     last_updated_by TEXT,
     PRIMARY KEY (role_id, menu_id),
-    FOREIGN KEY (role_id) REFERENCES "role"(role_id),
+    FOREIGN KEY (role_id) REFERENCES "tb_cm_role"(role_id),
     FOREIGN KEY (menu_id) REFERENCES "tb_cm_menu"(menu_id)
 );
-CREATE INDEX IF NOT EXISTS idx_role_menu_role_id ON role_menu (role_id);
-CREATE INDEX IF NOT EXISTS idx_role_menu_menu_id ON role_menu (menu_id);
+CREATE INDEX IF NOT EXISTS idx_role_menu_role_id ON tb_cm_role_menu (role_id);
+CREATE INDEX IF NOT EXISTS idx_role_menu_menu_id ON tb_cm_role_menu (menu_id);
 
 CREATE TABLE IF NOT EXISTS "user_role" (
     user_id INTEGER NOT NULL,
@@ -126,7 +126,7 @@ CREATE TABLE IF NOT EXISTS "user_role" (
     last_updated_by TEXT,
     PRIMARY KEY (user_id, role_id),
     FOREIGN KEY (user_id) REFERENCES "user"(user_id),
-    FOREIGN KEY (role_id) REFERENCES "role"(role_id)
+    FOREIGN KEY (role_id) REFERENCES "tb_cm_role"(role_id)
 );
 
 CREATE INDEX IF NOT EXISTS idx_user_role_user_id
