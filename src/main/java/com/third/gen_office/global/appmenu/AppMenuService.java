@@ -1,6 +1,6 @@
 package com.third.gen_office.global.appmenu;
 
-import com.third.gen_office.domain.menu.Menu;
+import com.third.gen_office.domain.menu.AppMenuItem;
 import com.third.gen_office.domain.menu.MenuRepository;
 import java.util.List;
 import java.util.Optional;
@@ -14,11 +14,11 @@ public class AppMenuService {
         this.menuRepository = menuRepository;
     }
 
-    public List<Menu> list() {
-        return menuRepository.findByUseFlag("Y");
+    public List<AppMenuItem> list() {
+        return menuRepository.findAppMenusByUseYn("Y");
     }
 
-    public Optional<Menu> get(Long id) {
-        return menuRepository.findById(id);
+    public Optional<AppMenuItem> get(Long id) {
+        return menuRepository.findAppMenuByMenuIdAndUseYn(id, "Y");
     }
 }

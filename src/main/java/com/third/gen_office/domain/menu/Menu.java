@@ -6,7 +6,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "menu")
+@Table(name = "tb_cm_menu")
 public class Menu {
     @Id
     @Column(name = "menu_id")
@@ -21,40 +21,29 @@ public class Menu {
     @Column(name = "menu_desc")
     private String menuDesc;
 
+    @Column(name = "menu_desc_eng")
+    private String menuDescEng;
+
     @Column(name = "menu_level")
     private Integer menuLevel;
 
-    @Column(name = "prnt_menu_id")
-    private Long prntMenuId;
+    @Column(name = "exec_component")
+    private String execComponent;
 
-    @Column(name = "dspl_flag")
-    private String dsplFlag;
+    @Column(name = "menu_icon")
+    private String menuIcon;
 
-    @Column(name = "use_flag")
-    private String useFlag;
+    @Column(name = "parent_menu_id")
+    private Long parentMenuId;
+
+    @Column(name = "display_yn")
+    private String displayYn;
+
+    @Column(name = "use_yn")
+    private String useYn;
 
     @Column(name = "sort_order")
     private Integer sortOrder;
-
-    private String url;
-
-    private String param1;
-    private String param2;
-    private String param3;
-    private String param4;
-    private String param5;
-
-    @Column(name = "ab_auth_flag")
-    private String abAuthFlag;
-
-    @Column(name = "c_auth_flag")
-    private String cAuthFlag;
-
-    @Column(name = "e_auth_flag")
-    private String eAuthFlag;
-
-    @Column(name = "f_auth_flag")
-    private String fAuthFlag;
 
     private String attribute1;
     private String attribute2;
@@ -73,8 +62,8 @@ public class Menu {
     @Column(name = "created_by")
     private String createdBy;
 
-    @Column(name = "last_update_date", insertable = false, updatable = false)
-    private String lastUpdateDate;
+    @Column(name = "last_updated_date", insertable = false, updatable = false)
+    private String lastUpdatedDate;
 
     @Column(name = "last_updated_by")
     private String lastUpdatedBy;
@@ -111,6 +100,14 @@ public class Menu {
         this.menuDesc = menuDesc;
     }
 
+    public String getMenuDescEng() {
+        return menuDescEng;
+    }
+
+    public void setMenuDescEng(String menuDescEng) {
+        this.menuDescEng = menuDescEng;
+    }
+
     public Integer getMenuLevel() {
         return menuLevel;
     }
@@ -119,28 +116,44 @@ public class Menu {
         this.menuLevel = menuLevel;
     }
 
-    public Long getPrntMenuId() {
-        return prntMenuId;
+    public String getExecComponent() {
+        return execComponent;
     }
 
-    public void setPrntMenuId(Long prntMenuId) {
-        this.prntMenuId = prntMenuId;
+    public void setExecComponent(String execComponent) {
+        this.execComponent = execComponent;
     }
 
-    public String getDsplFlag() {
-        return dsplFlag;
+    public String getMenuIcon() {
+        return menuIcon;
     }
 
-    public void setDsplFlag(String dsplFlag) {
-        this.dsplFlag = dsplFlag;
+    public void setMenuIcon(String menuIcon) {
+        this.menuIcon = menuIcon;
     }
 
-    public String getUseFlag() {
-        return useFlag;
+    public Long getParentMenuId() {
+        return parentMenuId;
     }
 
-    public void setUseFlag(String useFlag) {
-        this.useFlag = useFlag;
+    public void setParentMenuId(Long parentMenuId) {
+        this.parentMenuId = parentMenuId;
+    }
+
+    public String getDisplayYn() {
+        return displayYn;
+    }
+
+    public void setDisplayYn(String displayYn) {
+        this.displayYn = displayYn;
+    }
+
+    public String getUseYn() {
+        return useYn;
+    }
+
+    public void setUseYn(String useYn) {
+        this.useYn = useYn;
     }
 
     public Integer getSortOrder() {
@@ -149,86 +162,6 @@ public class Menu {
 
     public void setSortOrder(Integer sortOrder) {
         this.sortOrder = sortOrder;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getParam1() {
-        return param1;
-    }
-
-    public void setParam1(String param1) {
-        this.param1 = param1;
-    }
-
-    public String getParam2() {
-        return param2;
-    }
-
-    public void setParam2(String param2) {
-        this.param2 = param2;
-    }
-
-    public String getParam3() {
-        return param3;
-    }
-
-    public void setParam3(String param3) {
-        this.param3 = param3;
-    }
-
-    public String getParam4() {
-        return param4;
-    }
-
-    public void setParam4(String param4) {
-        this.param4 = param4;
-    }
-
-    public String getParam5() {
-        return param5;
-    }
-
-    public void setParam5(String param5) {
-        this.param5 = param5;
-    }
-
-    public String getAbAuthFlag() {
-        return abAuthFlag;
-    }
-
-    public void setAbAuthFlag(String abAuthFlag) {
-        this.abAuthFlag = abAuthFlag;
-    }
-
-    public String getCAuthFlag() {
-        return cAuthFlag;
-    }
-
-    public void setCAuthFlag(String cAuthFlag) {
-        this.cAuthFlag = cAuthFlag;
-    }
-
-    public String getEAuthFlag() {
-        return eAuthFlag;
-    }
-
-    public void setEAuthFlag(String eAuthFlag) {
-        this.eAuthFlag = eAuthFlag;
-    }
-
-    public String getFAuthFlag() {
-        return fAuthFlag;
-    }
-
-    public void setFAuthFlag(String fAuthFlag) {
-        this.fAuthFlag = fAuthFlag;
     }
 
     public String getAttribute1() {
@@ -323,8 +256,8 @@ public class Menu {
         this.createdBy = createdBy;
     }
 
-    public String getLastUpdateDate() {
-        return lastUpdateDate;
+    public String getLastUpdatedDate() {
+        return lastUpdatedDate;
     }
 
     public String getLastUpdatedBy() {

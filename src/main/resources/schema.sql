@@ -28,26 +28,19 @@ CREATE TABLE IF NOT EXISTS "user" (
     last_updated_date TEXT DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS "menu" (
-    menu_id INTEGER PRIMARY KEY,
-    menu_name TEXT,
-    menu_name_eng TEXT,
+CREATE TABLE IF NOT EXISTS tb_cm_menu(
+    menu_id INT NOT NULL PRIMARY KEY,
+    menu_name TEXT NOT NULL,
+    menu_name_eng TEXT NOT NULL,
     menu_desc TEXT,
-    menu_level INTEGER,
-    prnt_menu_id INTEGER,
-    dspl_flag TEXT,
-    use_flag TEXT,
-    sort_order INTEGER,
-    url TEXT,
-    param1 TEXT,
-    param2 TEXT,
-    param3 TEXT,
-    param4 TEXT,
-    param5 TEXT,
-    ab_auth_flag TEXT,
-    c_auth_flag TEXT,
-    e_auth_flag TEXT,
-    f_auth_flag TEXT,
+    menu_desc_eng TEXT,
+    menu_level INT NOT NULL,
+    menu_icon TEXT,
+    exec_component TEXT,
+    parent_menu_id INT,
+    display_yn TEXT CHECK (display_yn IN ('Y','N')),
+    use_yn TEXT CHECK (use_yn IN ('Y','N')),
+    sort_order INT,
     attribute1 TEXT,
     attribute2 TEXT,
     attribute3 TEXT,
@@ -60,7 +53,7 @@ CREATE TABLE IF NOT EXISTS "menu" (
     attribute10 TEXT,
     creation_date TEXT DEFAULT CURRENT_TIMESTAMP,
     created_by TEXT,
-    last_update_date TEXT DEFAULT CURRENT_TIMESTAMP,
+    last_updated_date TEXT DEFAULT CURRENT_TIMESTAMP,
     last_updated_by TEXT
 );
 
@@ -108,7 +101,7 @@ CREATE TABLE IF NOT EXISTS "role_menu" (
     last_updated_by TEXT,
     PRIMARY KEY (role_id, menu_id),
     FOREIGN KEY (role_id) REFERENCES "role"(role_id),
-    FOREIGN KEY (menu_id) REFERENCES "menu"(menu_id)
+    FOREIGN KEY (menu_id) REFERENCES "tb_cm_menu"(menu_id)
 );
 CREATE INDEX IF NOT EXISTS idx_role_menu_role_id ON role_menu (role_id);
 CREATE INDEX IF NOT EXISTS idx_role_menu_menu_id ON role_menu (menu_id);

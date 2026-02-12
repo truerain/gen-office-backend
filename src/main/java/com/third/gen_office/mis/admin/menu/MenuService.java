@@ -18,7 +18,7 @@ public class MenuService {
         return menuRepository.findAll();
     }
 
-    public List<Menu> chiidlMenu(Long id) { return menuRepository.findByPrntMenuId(id); }
+    public List<Menu> chiidlMenu(Long id) { return menuRepository.findByParentMenuId(id); }
 
     public Optional<Menu> get(Long id) {
         return menuRepository.findById(id);
@@ -51,21 +51,14 @@ public class MenuService {
         menu.setMenuName(request.menuName());
         menu.setMenuNameEng(request.menuNameEng());
         menu.setMenuDesc(request.menuDesc());
+        menu.setMenuDescEng(request.menuDescEng());
         menu.setMenuLevel(request.menuLevel());
-        menu.setPrntMenuId(request.prntMenuId());
-        menu.setDsplFlag(request.dsplFlag());
-        menu.setUseFlag(request.useFlag());
+        menu.setExecComponent(request.execComponent());
+        menu.setMenuIcon(request.menuIcon());
+        menu.setParentMenuId(request.parentMenuId());
+        menu.setDisplayYn(request.displayYn());
+        menu.setUseYn(request.useYn());
         menu.setSortOrder(request.sortOrder());
-        menu.setUrl(request.url());
-        menu.setParam1(request.param1());
-        menu.setParam2(request.param2());
-        menu.setParam3(request.param3());
-        menu.setParam4(request.param4());
-        menu.setParam5(request.param5());
-        menu.setAbAuthFlag(request.abAuthFlag());
-        menu.setCAuthFlag(request.cAuthFlag());
-        menu.setEAuthFlag(request.eAuthFlag());
-        menu.setFAuthFlag(request.fAuthFlag());
         menu.setAttribute1(request.attribute1());
         menu.setAttribute2(request.attribute2());
         menu.setAttribute3(request.attribute3());
