@@ -162,3 +162,55 @@ CREATE INDEX IF NOT EXISTS idx_tb_cm_message_ns_cd_lang
 
 CREATE INDEX IF NOT EXISTS idx_tb_cm_message_lang
     ON tb_cm_message (lang_cd);
+
+
+CREATE TABLE IF NOT EXISTS "tb_cm_notice" (
+    notice_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    subject TEXT,
+    content TEXT,
+    file_set_id INTEGER,
+    disp_start_date TEXT,
+    disp_end_date TEXT,
+    popup_yn TEXT,
+    use_yn TEXT,
+    read_count INTEGER,
+    attribute1 TEXT,
+    attribute2 TEXT,
+    attribute3 TEXT,
+    attribute4 TEXT,
+    attribute5 TEXT,
+    attribute6 TEXT,
+    attribute7 TEXT,
+    attribute8 TEXT,
+    attribute9 TEXT,
+    attribute10 TEXT,
+    created_by TEXT,
+    creation_date TEXT DEFAULT CURRENT_TIMESTAMP,
+    last_updated_by TEXT,
+    last_updated_date TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "tb_cm_file" (
+    file_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    file_set_id INTEGER not null,
+    file_path TEXT not null,
+    original_file_name TEXT not null,
+    file_extension TEXT,
+    stored_file_name TEXT not null,
+    file_size INTEGER,
+    use_yn TEXT,
+    attribute1 TEXT,
+    attribute2 TEXT,
+    attribute3 TEXT,
+    attribute4 TEXT,
+    attribute5 TEXT,
+    attribute6 TEXT,
+    attribute7 TEXT,
+    attribute8 TEXT,
+    attribute9 TEXT,
+    attribute10 TEXT,
+    created_by TEXT,
+    creation_date TEXT DEFAULT CURRENT_TIMESTAMP,
+    last_updated_by TEXT,
+    last_updated_date TEXT DEFAULT CURRENT_TIMESTAMP
+);
