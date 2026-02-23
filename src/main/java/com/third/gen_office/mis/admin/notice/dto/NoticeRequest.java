@@ -1,6 +1,6 @@
 package com.third.gen_office.mis.admin.notice.dto;
 
-import com.third.gen_office.mis.admin.notice.Notice;
+import com.third.gen_office.domain.notice.NoticeEntity;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Value;
@@ -8,10 +8,12 @@ import lombok.Value;
 import java.io.Serializable;
 
 /**
- * DTO for {@link Notice}
+ * DTO for {@link NoticeEntity}
  */
 @Value
 public class NoticeRequest implements Serializable {
+    Integer requestId;
+    Integer noticeId;
     @NotBlank(message = "제목은 필수입니다.")
     String title;
     String content;

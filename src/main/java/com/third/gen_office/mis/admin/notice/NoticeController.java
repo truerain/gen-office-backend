@@ -21,7 +21,7 @@ public class NoticeController {
     @Operation(summary = "공지사항 저장")
     @PostMapping
     public ResponseEntity<Integer> save(@RequestBody @Valid NoticeRequest request) {
-        Integer id = noticeService.createNotice(request);
+        Integer id = noticeService.saveNotice(request);
         return ResponseEntity.ok(id);
     }
 
@@ -41,6 +41,13 @@ public class NoticeController {
     @PatchMapping("/{id}/read-count")
     public ResponseEntity<Void> incrementReadCount(@PathVariable Integer id) {
         noticeService.updateReadCount(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "Delete notice")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        noticeService.deleteNotice(id);
         return ResponseEntity.ok().build();
     }
 }

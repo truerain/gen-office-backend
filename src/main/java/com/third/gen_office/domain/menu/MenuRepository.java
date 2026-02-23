@@ -6,10 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface MenuRepository extends JpaRepository<Menu, Long> {
-    List<Menu> findByUseYn(String useYn);
+public interface MenuRepository extends JpaRepository<MenuEntity, Long> {
+    List<MenuEntity> findByUseYn(String useYn);
 
-    List<Menu> findByParentMenuId(Long parentMenuId);
+    List<MenuEntity> findByParentMenuId(Long parentMenuId);
 
     @Query("""
         select
@@ -24,7 +24,7 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
             m.parentMenuId as parentMenuId,
             m.displayYn as displayYn,
             m.sortOrder as sortOrder
-        from Menu m
+        from MenuEntity m
         where m.useYn = :useYn
         order by m.sortOrder asc, m.menuId asc
         """)
@@ -43,7 +43,7 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
             m.parentMenuId as parentMenuId,
             m.displayYn as displayYn,
             m.sortOrder as sortOrder
-        from Menu m
+        from MenuEntity m
         where m.menuId = :menuId
           and m.useYn = :useYn
         """)

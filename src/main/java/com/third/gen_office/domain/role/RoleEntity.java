@@ -1,49 +1,42 @@
-package com.third.gen_office.domain.menu;
+package com.third.gen_office.domain.role;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
-@Table(name = "tb_cm_menu")
-public class Menu {
+@EntityListeners(AuditingEntityListener.class)
+@Table(name = "tb_cm_role")
+public class RoleEntity {
     @Id
-    @Column(name = "menu_id")
-    private Long menuId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "role_id")
+    private Long roleId;
 
-    @Column(name = "menu_name")
-    private String menuName;
+    @Column(name = "role_cd", nullable = false, unique = true)
+    private String roleCd;
 
-    @Column(name = "menu_name_eng")
-    private String menuNameEng;
+    @Column(name = "role_name", nullable = false)
+    private String roleName;
 
-    @Column(name = "menu_desc")
-    private String menuDesc;
+    @Column(name = "role_name_eng", nullable = false)
+    private String roleNameEng;
 
-    @Column(name = "menu_desc_eng")
-    private String menuDescEng;
-
-    @Column(name = "menu_level")
-    private Integer menuLevel;
-
-    @Column(name = "exec_component")
-    private String execComponent;
-
-    @Column(name = "menu_icon")
-    private String menuIcon;
-
-    @Column(name = "parent_menu_id")
-    private Long parentMenuId;
-
-    @Column(name = "display_yn")
-    private String displayYn;
-
-    @Column(name = "use_yn")
-    private String useYn;
+    @Column(name = "role_desc")
+    private String roleDesc;
 
     @Column(name = "sort_order")
     private Integer sortOrder;
+
+    @Column(name = "use_yn")
+    private String useYn;
 
     private String attribute1;
     private String attribute2;
@@ -59,101 +52,55 @@ public class Menu {
     @Column(name = "creation_date", insertable = false, updatable = false)
     private String creationDate;
 
+    @CreatedBy
     @Column(name = "created_by")
     private String createdBy;
 
     @Column(name = "last_updated_date", insertable = false, updatable = false)
     private String lastUpdatedDate;
 
+    @LastModifiedBy
     @Column(name = "last_updated_by")
     private String lastUpdatedBy;
 
-    public Long getMenuId() {
-        return menuId;
+    public Long getRoleId() {
+        return roleId;
     }
 
-    public void setMenuId(Long menuId) {
-        this.menuId = menuId;
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
     }
 
-    public String getMenuName() {
-        return menuName;
+    public String getRoleCd() {
+        return roleCd;
     }
 
-    public void setMenuName(String menuName) {
-        this.menuName = menuName;
+    public void setRoleCd(String roleCd) {
+        this.roleCd = roleCd;
     }
 
-    public String getMenuNameEng() {
-        return menuNameEng;
+    public String getRoleName() {
+        return roleName;
     }
 
-    public void setMenuNameEng(String menuNameEng) {
-        this.menuNameEng = menuNameEng;
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
     }
 
-    public String getMenuDesc() {
-        return menuDesc;
+    public String getRoleNameEng() {
+        return roleNameEng;
     }
 
-    public void setMenuDesc(String menuDesc) {
-        this.menuDesc = menuDesc;
+    public void setRoleNameEng(String roleNameEng) {
+        this.roleNameEng = roleNameEng;
     }
 
-    public String getMenuDescEng() {
-        return menuDescEng;
+    public String getRoleDesc() {
+        return roleDesc;
     }
 
-    public void setMenuDescEng(String menuDescEng) {
-        this.menuDescEng = menuDescEng;
-    }
-
-    public Integer getMenuLevel() {
-        return menuLevel;
-    }
-
-    public void setMenuLevel(Integer menuLevel) {
-        this.menuLevel = menuLevel;
-    }
-
-    public String getExecComponent() {
-        return execComponent;
-    }
-
-    public void setExecComponent(String execComponent) {
-        this.execComponent = execComponent;
-    }
-
-    public String getMenuIcon() {
-        return menuIcon;
-    }
-
-    public void setMenuIcon(String menuIcon) {
-        this.menuIcon = menuIcon;
-    }
-
-    public Long getParentMenuId() {
-        return parentMenuId;
-    }
-
-    public void setParentMenuId(Long parentMenuId) {
-        this.parentMenuId = parentMenuId;
-    }
-
-    public String getDisplayYn() {
-        return displayYn;
-    }
-
-    public void setDisplayYn(String displayYn) {
-        this.displayYn = displayYn;
-    }
-
-    public String getUseYn() {
-        return useYn;
-    }
-
-    public void setUseYn(String useYn) {
-        this.useYn = useYn;
+    public void setRoleDesc(String roleDesc) {
+        this.roleDesc = roleDesc;
     }
 
     public Integer getSortOrder() {
@@ -162,6 +109,14 @@ public class Menu {
 
     public void setSortOrder(Integer sortOrder) {
         this.sortOrder = sortOrder;
+    }
+
+    public String getUseYn() {
+        return useYn;
+    }
+
+    public void setUseYn(String useYn) {
+        this.useYn = useYn;
     }
 
     public String getAttribute1() {

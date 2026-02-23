@@ -25,6 +25,12 @@ class FileController {
         return ResponseEntity.ok(fileSetId);
     }
 
+    @Operation(summary = "Get new file_set_id")
+    @GetMapping("/newFileSetId")
+    public ResponseEntity<Integer> newSetId() {
+        return ResponseEntity.ok(fileService.createFileSetId());
+    }
+
     @Operation(summary = "파일 다운로드")
     @GetMapping("/download/{fileId}")
     public ResponseEntity<Resource> download(@PathVariable Integer fileId) {

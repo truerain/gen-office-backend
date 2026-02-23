@@ -1,8 +1,9 @@
 package com.third.gen_office.mis.admin.rolemenu;
 
-import com.third.gen_office.infrastructure.authorization.RoleMenuEntity;
-import com.third.gen_office.infrastructure.authorization.RoleMenuId;
-import com.third.gen_office.mis.admin.rolemenu.dao.RoleMenuRepository;
+import com.third.gen_office.domain.role.RoleMenuEntity;
+import com.third.gen_office.domain.role.RoleMenuId;
+import com.third.gen_office.domain.role.RoleMenuRepository;
+import com.third.gen_office.mis.admin.rolemenu.dto.RoleMenuView;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;

@@ -2,7 +2,8 @@ package com.third.gen_office.mis.admin.user;
 
 import java.util.List;
 import java.util.Optional;
-import com.third.gen_office.mis.admin.user.dao.UserRepository;
+import com.third.gen_office.domain.user.UserEntity;
+import com.third.gen_office.domain.user.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,25 +17,25 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public List<User> list() {
+    public List<UserEntity> list() {
         return userRepository.findAll();
     }
 
-    public List<User> listByEmpName(String empName) {
+    public List<UserEntity> listByEmpName(String empName) {
         return userRepository.findByEmpNameContainingIgnoreCase(empName);
     }
 
-    public Optional<User> get(Long id) {
+    public Optional<UserEntity> get(Long id) {
         return userRepository.findById(id);
     }
 
-    public User create(UserRequest request) {
-        User user = new User();
-        applyRequest(user, request);
-        return userRepository.save(user);
+    public UserEntity create(UserRequest request) {
+        UserEntity userEntity = new UserEntity();
+        applyRequest(userEntity, request);
+        return userRepository.save(userEntity);
     }
 
-    public Optional<User> update(Long id, UserRequest request) {
+    public Optional<UserEntity> update(Long id, UserRequest request) {
         return userRepository.findById(id)
             .map(user -> {
                 applyRequest(user, request);
@@ -50,32 +51,32 @@ public class UserService {
         return true;
     }
 
-    private void applyRequest(User user, UserRequest request) {
-        user.setEmpNo(request.empNo());
-        user.setEmpName(request.empName());
-        user.setEmpNameEng(request.empNameEng());
+    private void applyRequest(UserEntity userEntity, UserRequest request) {
+        userEntity.setEmpNo(request.empNo());
+        userEntity.setEmpName(request.empName());
+        userEntity.setEmpNameEng(request.empNameEng());
         if (request.password() != null && !request.password().isBlank()) {
-            user.setPassword(passwordEncoder.encode(request.password()));
+            userEntity.setPassword(passwordEncoder.encode(request.password()));
         }
-        user.setEmail(request.email());
-        user.setOrgId(request.orgId());
-        user.setOrgName(request.orgName());
-        user.setTitleCd(request.titleCd());
-        user.setTitleName(request.titleName());
-        user.setWorkTel(request.workTel());
-        user.setMobileTel(request.mobileTel());
-        user.setLangCd(request.langCd());
-        user.setAttribute1(request.attribute1());
-        user.setAttribute2(request.attribute2());
-        user.setAttribute3(request.attribute3());
-        user.setAttribute4(request.attribute4());
-        user.setAttribute5(request.attribute5());
-        user.setAttribute6(request.attribute6());
-        user.setAttribute7(request.attribute7());
-        user.setAttribute8(request.attribute8());
-        user.setAttribute9(request.attribute9());
-        user.setAttribute10(request.attribute10());
-        user.setCreatedBy(request.createdBy());
-        user.setLastUpdatedBy(request.lastUpdatedBy());
+        userEntity.setEmail(request.email());
+        userEntity.setOrgId(request.orgId());
+        userEntity.setOrgName(request.orgName());
+        userEntity.setTitleCd(request.titleCd());
+        userEntity.setTitleName(request.titleName());
+        userEntity.setWorkTel(request.workTel());
+        userEntity.setMobileTel(request.mobileTel());
+        userEntity.setLangCd(request.langCd());
+        userEntity.setAttribute1(request.attribute1());
+        userEntity.setAttribute2(request.attribute2());
+        userEntity.setAttribute3(request.attribute3());
+        userEntity.setAttribute4(request.attribute4());
+        userEntity.setAttribute5(request.attribute5());
+        userEntity.setAttribute6(request.attribute6());
+        userEntity.setAttribute7(request.attribute7());
+        userEntity.setAttribute8(request.attribute8());
+        userEntity.setAttribute9(request.attribute9());
+        userEntity.setAttribute10(request.attribute10());
+        userEntity.setCreatedBy(request.createdBy());
+        userEntity.setLastUpdatedBy(request.lastUpdatedBy());
     }
 }

@@ -1,8 +1,8 @@
-package com.third.gen_office.mis.admin.rolemenu.dao;
+package com.third.gen_office.domain.role;
 
-import com.third.gen_office.infrastructure.authorization.RoleMenuEntity;
-import com.third.gen_office.infrastructure.authorization.RoleMenuId;
-import com.third.gen_office.mis.admin.rolemenu.RoleMenuView;
+import com.third.gen_office.domain.role.RoleMenuEntity;
+import com.third.gen_office.domain.role.RoleMenuId;
+import com.third.gen_office.mis.admin.rolemenu.dto.RoleMenuView;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,7 +15,7 @@ public interface RoleMenuRepository extends JpaRepository<RoleMenuEntity, RoleMe
     void deleteByRoleIdAndMenuId(Long roleId, Long menuId);
 
     @Query("""
-        select new com.third.gen_office.mis.admin.rolemenu.RoleMenuView(
+        select new com.third.gen_office.mis.admin.rolemenu.dto.RoleMenuView(
             m.menuId,
             m.menuName,
             m.menuNameEng,
@@ -29,7 +29,7 @@ public interface RoleMenuRepository extends JpaRepository<RoleMenuEntity, RoleMe
             m.sortOrder,
             coalesce(rm.useYn, 'N')
         )
-        from Menu m
+        from MenuEntity m
         left join RoleMenuEntity rm
             on rm.menuId = m.menuId and rm.roleId = :roleId
         where m.useYn = 'Y'
@@ -37,7 +37,7 @@ public interface RoleMenuRepository extends JpaRepository<RoleMenuEntity, RoleMe
             m.parentMenuId = 0
             or exists (
                 select 1
-                from Menu p
+                from MenuEntity p
                 where p.menuId = m.parentMenuId
                   and p.useYn = 'Y'
             )

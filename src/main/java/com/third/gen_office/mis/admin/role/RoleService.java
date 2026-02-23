@@ -1,7 +1,7 @@
 package com.third.gen_office.mis.admin.role;
 
-import com.third.gen_office.infrastructure.authorization.RoleEntity;
-import com.third.gen_office.mis.admin.role.dao.RoleRepository;
+import com.third.gen_office.domain.role.RoleEntity;
+import com.third.gen_office.domain.role.RoleRepository;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;

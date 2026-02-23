@@ -8,16 +8,22 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import jakarta.persistence.Id;
 
 import java.time.LocalDateTime;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
 @Table(name = "tb_cm_file")
-@NoArgsConstructor(access = AccessLevel.PROTECTED) // 무분별한 객체 생성을 막기 위해 설정
 public class FileEntity {
+
+    protected FileEntity() {
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -69,6 +75,7 @@ public class FileEntity {
     @Column(name = "attribute10")
     private String attribute10;
 
+    @CreatedBy
     @Column(name = "created_by", updatable = false)
     private String createdBy;
 
@@ -76,6 +83,7 @@ public class FileEntity {
     @Column(name = "creation_date", updatable = false)
     private LocalDateTime creationDate;
 
+    @LastModifiedBy
     @Column(name = "last_updated_by")
     private String lastUpdatedBy;
 

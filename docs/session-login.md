@@ -116,11 +116,11 @@
 
 
 ### 구현내용요약 
-세션/로그인 문서에 맞춰 Spring Boot 쪽 세션 기반 로그인, CSRF 토큰 조회, 세션 최대 수명 필터, 비밀번호 해시 처리까지 구현했어요. src/main/java/com/third/gen_office/config/SecurityConfig.java에서 세션/CSRF/인증 정책과 필터를 설정했고, src/main/java/com/third/gen_office/mis/auth/AuthController.java에 /api/auth/login, /api/auth/logout, /api/auth/me, /api/auth/csrf 엔드포인트를 추가했습니다. src/main/java/com/third/gen_office/mis/admin/user/UserService.java에서는 비밀번호를 BCrypt로 해시하도록 변경했습니다.  
+세션/로그인 문서에 맞춰 Spring Boot 쪽 세션 기반 로그인, CSRF 토큰 조회, 세션 최대 수명 필터, 비밀번호 해시 처리까지 구현했어요. src/main/java/com/third/gen_office/config/SecurityConfig.java에서 세션/CSRF/인증 정책과 필터를 설정했고, src/main/java/com/third/gen_office/mis/auth/AuthController.java에 /api/auth/login, /api/auth/logout, /api/auth/me, /api/auth/csrf 엔드포인트를 추가했습니다. src/main/java/com/third/gen_office/mis/admin/userEntity/UserService.java에서는 비밀번호를 BCrypt로 해시하도록 변경했습니다.  
 • 인증/세션: src/main/java/com/third/gen_office/config/SecurityConfig.java에서 세션 기반 인증, 단일 세션, CSRF 쿠키 토큰, 절대 세션 만료 필터를 구성  
 • 로그인/세션 데이터: src/main/java/com/third/gen_office/mis/auth/AuthController.java에서 로그인 성공 시 세션에 userId, roles, dept, loginTime 저장  
 • 사용자 인증: src/main/java/com/third/gen_office/mis/auth/UserDetailsServiceImpl.java, src/main/java/com/third/gen_office/mis/auth/UserPrincipal.java로 Spring Security 인증 연동  
-• 비밀번호 해시: src/main/java/com/third/gen_office/mis/admin/user/UserService.java에서 신규/변경 시 BCrypt 적용  
+• 비밀번호 해시: src/main/java/com/third/gen_office/mis/admin/userEntity/UserService.java에서 신규/변경 시 BCrypt 적용  
 • 세션 정책: src/main/resources/application.yaml에 server.servlet.session.timeout: 30m, same-site: Lax 추가  
 • 문서 보강: docs/session-login.md에 CSRF 토큰 엔드포인트와 절대 만료 처리 추가
 

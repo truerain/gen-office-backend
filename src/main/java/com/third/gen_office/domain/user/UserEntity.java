@@ -1,6 +1,6 @@
-package com.third.gen_office.mis.admin.user;
+package com.third.gen_office.domain.user;
 
-import com.third.gen_office.infrastructure.authorization.RoleEntity;
+import com.third.gen_office.domain.role.RoleEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -13,10 +13,15 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import java.util.HashSet;
 import java.util.Set;
+import jakarta.persistence.EntityListeners;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "user")
-public class User {
+public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -65,12 +70,14 @@ public class User {
     private String attribute9;
     private String attribute10;
 
+    @CreatedBy
     @Column(name = "created_by")
     private String createdBy;
 
     @Column(name = "creation_date", insertable = false, updatable = false)
     private String creationDate;
 
+    @LastModifiedBy
     @Column(name = "last_updated_by")
     private String lastUpdatedBy;
 

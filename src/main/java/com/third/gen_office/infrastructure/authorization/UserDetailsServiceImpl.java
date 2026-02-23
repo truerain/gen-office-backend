@@ -1,8 +1,9 @@
 package com.third.gen_office.infrastructure.authorization;
 
-import com.third.gen_office.mis.admin.user.User;
-import com.third.gen_office.mis.admin.user.dao.UserRepository;
-import com.third.gen_office.infrastructure.authorization.UserPrincipal;
+import com.third.gen_office.domain.role.RoleEntity;
+import com.third.gen_office.domain.user.UserEntity;
+import com.third.gen_office.domain.user.UserRepository;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,13 +21,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByEmpNo(username)
+        UserEntity userEntity = userRepository.findByEmpNo(username)
             .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
-        List<String> roles = user.getRoles() == null || user.getRoles().isEmpty()
+        List<String> roles = userEntity.getRoles() == null || userEntity.getRoles().isEmpty()
             ? Role.defaultRoles()
-            : user.getRoles().stream()
+            : userEntity.getRoles().stream()
                 .map(RoleEntity::getRoleCd)
                 .collect(Collectors.toList());
-        return new UserPrincipal(user, roles);
+        return new UserPrincipal(userEntity, roles);
     }
 }

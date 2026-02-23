@@ -1,4 +1,4 @@
-package com.third.gen_office.mis.admin.rolemenu;
+package com.third.gen_office.mis.admin.rolemenu.dto;
 
 public record RoleMenuView(
     Long menuId,

@@ -1,7 +1,8 @@
 package com.third.gen_office.mis.admin.rolemenu;
 
+import com.third.gen_office.domain.role.RoleMenuEntity;
+import com.third.gen_office.mis.admin.rolemenu.dto.RoleMenuView;
 import com.third.gen_office.global.error.NotFoundException;
-import com.third.gen_office.infrastructure.authorization.RoleMenuEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

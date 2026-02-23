@@ -1,6 +1,6 @@
 package com.third.gen_office.infrastructure.authorization;
 
-import com.third.gen_office.mis.admin.user.User;
+import com.third.gen_office.domain.user.UserEntity;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -9,11 +9,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public class UserPrincipal implements UserDetails {
-    private final User user;
+    private final UserEntity userEntity;
     private final List<GrantedAuthority> authorities;
 
-    public UserPrincipal(User user, List<String> roles) {
-        this.user = user;
+    public UserPrincipal(UserEntity userEntity, List<String> roles) {
+        this.userEntity = userEntity;
         this.authorities = roles.stream()
             .map(role -> role.startsWith("ROLE_") ? role : "ROLE_" + role)
             .map(SimpleGrantedAuthority::new)
@@ -21,23 +21,23 @@ public class UserPrincipal implements UserDetails {
     }
 
     public Long getUserId() {
-        return user.getUserId();
+        return userEntity.getUserId();
     }
 
     public String getEmpNo() {
-        return user.getEmpNo();
+        return userEntity.getEmpNo();
     }
 
     public String getEmpName() {
-        return user.getEmpName();
+        return userEntity.getEmpName();
     }
 
     public String getOrgId() {
-        return user.getOrgId();
+        return userEntity.getOrgId();
     }
 
     public String getOrgName() {
-        return user.getOrgName();
+        return userEntity.getOrgName();
     }
 
     public List<String> getRoles() {
@@ -53,12 +53,12 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return userEntity.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return user.getEmpNo();
+        return userEntity.getEmpNo();
     }
 
     @Override

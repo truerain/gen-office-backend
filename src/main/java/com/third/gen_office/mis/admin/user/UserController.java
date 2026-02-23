@@ -1,5 +1,6 @@
 package com.third.gen_office.mis.admin.user;
 
+import com.third.gen_office.domain.user.UserEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,7 +30,7 @@ public class UserController {
 
     @GetMapping
     @Operation(summary = "사용자 목록 조회")
-    public List<User> list(
+    public List<UserEntity> list(
         @Parameter(description = "이름 검색(부분 일치)") @RequestParam(required = false) String empName
     ) {
         if (empName == null || empName.isBlank()) {
@@ -40,27 +41,27 @@ public class UserController {
 
     @GetMapping("/{id}")
     @Operation(summary = "사용자 단건 조회")
-    public ResponseEntity<User> get(@Parameter(description = "user id") @PathVariable Long id) {
-        User user = userService.get(id)
+    public ResponseEntity<UserEntity> get(@Parameter(description = "user id") @PathVariable Long id) {
+        UserEntity userEntity = userService.get(id)
             .orElseThrow(() -> new NotFoundException("user.not_found"));
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(userEntity);
     }
 
     @PostMapping
     @Operation(summary = "사용자 생성")
-    public ResponseEntity<User> create(@RequestBody UserRequest request) {
+    public ResponseEntity<UserEntity> create(@RequestBody UserRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(request));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "사용자 수정")
-    public ResponseEntity<User> update(
+    public ResponseEntity<UserEntity> update(
         @Parameter(description = "user id") @PathVariable Long id,
         @RequestBody UserRequest request
     ) {
-        User user = userService.update(id, request)
+        UserEntity userEntity = userService.update(id, request)
             .orElseThrow(() -> new NotFoundException("user.not_found"));
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(userEntity);
     }
 
     @DeleteMapping("/{id}")

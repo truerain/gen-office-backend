@@ -23,7 +23,7 @@ global                     # 공통 설정 및 유틸리티
 │   └── common             # 공통 응답(Response) 및 BaseEntity  
 │  
 ├── mis                   # 핵심 비즈니스 로직 (도메인별 분리)  
-│   ├── user              # [도메인 1] 결산 관리  
+│   ├── userEntity              # [도메인 1] 결산 관리  
 │   │   ├── api            # Controller (Springdoc 어노테이션 포함)  
 │   │   ├── application    # Service (비즈니스 로직)  
 │   │   ├── dao            # Repository & QueryDSL Custom Repository  
@@ -42,7 +42,7 @@ global                     # 공통 설정 및 유틸리티
 └── infrastructure         # 외부 시스템 연동 (메일, 파일 업로드 등)  
 
 #### Domain 내부 기준 
-mis/admin/user/  
+mis/admin/userEntity/  
    UserController  
    UserService  
    User  

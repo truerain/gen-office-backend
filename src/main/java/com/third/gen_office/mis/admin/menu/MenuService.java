@@ -1,6 +1,6 @@
 package com.third.gen_office.mis.admin.menu;
 
-import com.third.gen_office.domain.menu.Menu;
+import com.third.gen_office.domain.menu.MenuEntity;
 import com.third.gen_office.domain.menu.MenuRepository;
 import java.util.List;
 import java.util.Optional;
@@ -14,24 +14,24 @@ public class MenuService {
         this.menuRepository = menuRepository;
     }
 
-    public List<Menu> list() {
+    public List<MenuEntity> list() {
         return menuRepository.findAll();
     }
 
-    public List<Menu> chiidlMenu(Long id) { return menuRepository.findByParentMenuId(id); }
+    public List<MenuEntity> chiidlMenu(Long id) { return menuRepository.findByParentMenuId(id); }
 
-    public Optional<Menu> get(Long id) {
+    public Optional<MenuEntity> get(Long id) {
         return menuRepository.findById(id);
     }
 
-    public Menu create(MenuRequest request) {
-        Menu menu = new Menu();
+    public MenuEntity create(MenuRequest request) {
+        MenuEntity menu = new MenuEntity();
         applyRequest(menu, request);
         menu.setMenuId(request.menuId());
         return menuRepository.save(menu);
     }
 
-    public Optional<Menu> update(Long id, MenuRequest request) {
+    public Optional<MenuEntity> update(Long id, MenuRequest request) {
         return menuRepository.findById(id)
             .map(menu -> {
                 applyRequest(menu, request);
@@ -47,7 +47,7 @@ public class MenuService {
         return true;
     }
 
-    private void applyRequest(Menu menu, MenuRequest request) {
+    private void applyRequest(MenuEntity menu, MenuRequest request) {
         menu.setMenuName(request.menuName());
         menu.setMenuNameEng(request.menuNameEng());
         menu.setMenuDesc(request.menuDesc());

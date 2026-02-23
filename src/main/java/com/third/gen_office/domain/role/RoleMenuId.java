@@ -1,4 +1,4 @@
-package com.third.gen_office.infrastructure.authorization;
+package com.third.gen_office.domain.role;
 
 import java.io.Serializable;
 import java.util.Objects;

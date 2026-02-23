@@ -1,6 +1,6 @@
 package com.third.gen_office.mis.admin.menu;
 
-import com.third.gen_office.domain.menu.Menu;
+import com.third.gen_office.domain.menu.MenuEntity;
 import com.third.gen_office.global.error.NotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -33,36 +33,36 @@ public class MenuController {
 
     @GetMapping
     @Operation(summary = "메뉴 목록 조회")
-    public List<Menu> list() {
+    public List<MenuEntity> list() {
         return menuService.list();
     }
 
     @GetMapping("/submenu/{id}")
     @Operation(summary = "하위 메뉴 목록 조회")
-    public List<Menu> childMenu(@Parameter(description = "상위 메뉴 ID") @PathVariable Long id) {
+    public List<MenuEntity> childMenu(@Parameter(description = "상위 메뉴 ID") @PathVariable Long id) {
         return menuService.chiidlMenu(id);
     }
     @GetMapping("/{id}")
     @Operation(summary = "메뉴 단건 조회")
-    public ResponseEntity<Menu> get(@Parameter(description = "메뉴 ID") @PathVariable Long id) {
-        Menu menu = menuService.get(id)
+    public ResponseEntity<MenuEntity> get(@Parameter(description = "메뉴 ID") @PathVariable Long id) {
+        MenuEntity menu = menuService.get(id)
             .orElseThrow(() -> new NotFoundException("menu.not_found"));
         return ResponseEntity.ok(menu);
     }
 
     @PostMapping
     @Operation(summary = "메뉴 생성")
-    public ResponseEntity<Menu> create(@RequestBody MenuRequest request) {
+    public ResponseEntity<MenuEntity> create(@RequestBody MenuRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(menuService.create(request));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "메뉴 수정")
-    public ResponseEntity<Menu> update(
+    public ResponseEntity<MenuEntity> update(
         @Parameter(description = "메뉴 ID") @PathVariable Long id,
         @RequestBody MenuRequest request
     ) {
-        Menu menu = menuService.update(id, request)
+        MenuEntity menu = menuService.update(id, request)
             .orElseThrow(() -> new NotFoundException("menu.not_found"));
         return ResponseEntity.ok(menu);
     }

@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS "user" (
+CREATE TABLE IF NOT EXISTS "userEntity" (
     user_id INTEGER PRIMARY KEY AUTOINCREMENT,
     emp_no TEXT NOT NULL UNIQUE,
     emp_name TEXT NOT NULL,
@@ -125,7 +125,7 @@ CREATE TABLE IF NOT EXISTS "user_role" (
     last_updated_date TEXT DEFAULT CURRENT_TIMESTAMP,
     last_updated_by TEXT,
     PRIMARY KEY (user_id, role_id),
-    FOREIGN KEY (user_id) REFERENCES "user"(user_id),
+    FOREIGN KEY (user_id) REFERENCES "userEntity"(user_id),
     FOREIGN KEY (role_id) REFERENCES "tb_cm_role"(role_id)
 );
 
@@ -213,4 +213,8 @@ CREATE TABLE IF NOT EXISTS "tb_cm_file" (
     creation_date TEXT DEFAULT CURRENT_TIMESTAMP,
     last_updated_by TEXT,
     last_updated_date TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "tb_cm_file_set" (
+    file_set_id INTEGER PRIMARY KEY AUTOINCREMENT
 );

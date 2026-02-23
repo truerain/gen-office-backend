@@ -10,9 +10,9 @@ Backend i18n 설계 (DB 기반)
 - 기본키: `(message_cd, lang_cd, namespace)`
 - 추가 인덱스: `(namespace, message_cd, lang_cd)`, `(lang_cd)`
 - 필드 의미:
-  - `message_cd`: 고정 메시지 키 (예: `error.user.not_found`)
+  - `message_cd`: 고정 메시지 키 (예: `error.userEntity.not_found`)
   - `lang_cd`: 로케일 코드 (예: `ko`, `en`, `en-US`)
-  - `namespace`: 도메인/컨텍스트 구분 (예: `auth`, `menu`, `user`)
+  - `namespace`: 도메인/컨텍스트 구분 (예: `auth`, `menu`, `userEntity`)
   - `message_txt`: 로케일 문자열
 
 로케일 결정
@@ -61,7 +61,7 @@ Frontend 전달 내용
 에러 응답 포맷
 {
 "code": "NOT_FOUND",
-"messageKey": "user.not_found",
+"messageKey": "userEntity.not_found",
 "message": "사용자를 찾을 수 없습니다",
 "locale": "ko",
 "path": "/api/users/1",
@@ -74,6 +74,6 @@ Frontend 전달 내용
 •에러 표시 시 message를 우선 사용하고, 필요하면 messageKey로 클라이언트 i18n fallback 가능.
 •Content-Language 값으로 서버가 적용한 로케일을 확인 가능.
 현재 정의된 메시지 키
-•user.not_found
+•userEntity.not_found
 •menu.not_found
 •common.internal_error
