@@ -77,3 +77,28 @@ Frontend 전달 내용
 •userEntity.not_found
 •menu.not_found
 •common.internal_error
+
+
+### I18n 패키지 관련 클래스 정리
+1. I18nConfig.java
+ - MessageSource, LocaleResolver, 응답 헤더 인터셉터를 스프링에 등록하는 설정 클래스입니다. DB 기반 메시지 소스(DbMessageSource)와 헤더 기반 로케일 해석(HeaderLocaleResolver)을 활성화합니다.
+2. DbMessageSource.java
+ - DB(tb_cm_message)에서 메시지를 조회하는 MessageSource 구현체입니다. 로케일 언어코드 폴백(예: ko-KR → ko → 기본 ko)과 캐시(Caffeine)를 적용합니다.
+3. HeaderLocaleResolver.java
+ - 요청에서 로케일을 결정합니다. 우선순위는 X-Lang 헤더 → Accept-Language → request attribute userLang → 기본 ko입니다.
+4. LocaleResponseHeaderInterceptor.java
+ - 응답에 Content-Language 헤더를 설정해 최종 로케일을 클라이언트에 알려줍니다.
+5. I18nController.java
+ - /api/i18n API로 특정 locale과 namespace에 해당하는 메시지 목록을 조회합니다. 결과는 I18nItemsResponse로 반환됩니다.
+6.
+src/main/java/com/third/gen_office/global/i18n/I18nItemResponse.java
+단일 메시지 항목 DTO입니다. key, value를 가집니다.
+7.
+src/main/java/com/third/gen_office/global/i18n/I18nItemsResponse.java
+메시지 목록 응답 DTO입니다. items 리스트를 가집니다.
+8.
+src/main/java/com/third/gen_office/global/i18n/MessageKey.java
+메시지 키 파서입니다. namespace.messageCd 형식을 분리하고 기본 네임스페이스(common) 및 잘못된 키 처리에 사용됩니다. DbMessageSource에서 내부적으로 사용됩니다.
+9.
+src/main/java/com/third/gen_office/global/error/GlobalExceptionHandler.java
+예외 응답 메시지를 MessageSource로 i18n 처리합니다. ApiException과 일반 예외에 대해 로케일별 메시지를 조회해 응답에 포함합니다.

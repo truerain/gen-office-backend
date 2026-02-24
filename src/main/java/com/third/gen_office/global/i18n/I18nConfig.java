@@ -1,6 +1,5 @@
 package com.third.gen_office.global.i18n;
 
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -11,7 +10,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class I18nConfig implements WebMvcConfigurer {
     @Bean
-    public MessageSource messageSource(JdbcTemplate jdbcTemplate) {
+    public DbMessageSource messageSource(JdbcTemplate jdbcTemplate) {
         return new DbMessageSource(jdbcTemplate);
     }
 

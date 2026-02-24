@@ -74,4 +74,12 @@ public class DbMessageSource extends AbstractMessageSource {
         }
         return tag;
     }
+
+    public void evict(String namespace, String messageCd, String langCd) {
+        if (namespace == null || messageCd == null || langCd == null) {
+            return;
+        }
+        String cacheKey = namespace + "|" + messageCd + "|" + langCd;
+        cache.invalidate(cacheKey);
+    }
 }

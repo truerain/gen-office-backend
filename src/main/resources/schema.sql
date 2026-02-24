@@ -218,3 +218,59 @@ CREATE TABLE IF NOT EXISTS "tb_cm_file" (
 CREATE TABLE IF NOT EXISTS "tb_cm_file_set" (
     file_set_id INTEGER PRIMARY KEY AUTOINCREMENT
 );
+
+
+CREATE TABLE IF NOT EXISTS "tb_cm_lkup_master" (
+    lkup_clss_cd TEXT PRIMARY KEY,
+    lkup_clss_name TEXT,
+    lkup_clss_desc TEXT,
+    use_yn TEXT CHECK (use_yn IN ('Y', 'N')),
+    attribute1 TEXT,
+    attribute2 TEXT,
+    attribute3 TEXT,
+    attribute4 TEXT,
+    attribute5 TEXT,
+    attribute6 TEXT,
+    attribute7 TEXT,
+    attribute8 TEXT,
+    attribute9 TEXT,
+    attribute10 TEXT,
+    creation_date TEXT DEFAULT CURRENT_TIMESTAMP,
+    created_by TEXT,
+    last_updated_date TEXT DEFAULT CURRENT_TIMESTAMP,
+    last_updated_by TEXT
+);
+
+CREATE TABLE IF NOT EXISTS  "tb_cm_lkup_detail" (
+    lkup_clss_cd TEXT,
+    lkup_cd TEXT,
+    lkup_name TEXT,
+    lkup_name_eng TEXT,
+    sort_order INTEGER,
+    use_yn TEXT CHECK (use_yn IN ('Y', 'N')),
+    attribute1 TEXT,
+    attribute2 TEXT,
+    attribute3 TEXT,
+    attribute4 TEXT,
+    attribute5 TEXT,
+    attribute6 TEXT,
+    attribute7 TEXT,
+    attribute8 TEXT,
+    attribute9 TEXT,
+    attribute10 TEXT,
+    attribute11 TEXT,
+    attribute12 TEXT,
+    attribute13 TEXT,
+    attribute14 TEXT,
+    attribute15 TEXT,
+    attribute16 TEXT,
+    attribute17 TEXT,
+    attribute18 TEXT,
+    attribute19 TEXT,
+    attribute20 TEXT,
+    creation_date TEXT DEFAULT CURRENT_TIMESTAMP,
+    created_by TEXT,
+    last_updated_date TEXT DEFAULT CURRENT_TIMESTAMP,
+    last_updated_by TEXT,
+    PRIMARY KEY (lkup_clss_cd, lkup_cd)
+);
