@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS "userEntity" (
+CREATE TABLE IF NOT EXISTS "tb_cm_user" (
     user_id INTEGER PRIMARY KEY AUTOINCREMENT,
     emp_no TEXT NOT NULL UNIQUE,
     emp_name TEXT NOT NULL,
@@ -106,7 +106,7 @@ CREATE TABLE IF NOT EXISTS "tb_cm_role_menu" (
 CREATE INDEX IF NOT EXISTS idx_role_menu_role_id ON tb_cm_role_menu (role_id);
 CREATE INDEX IF NOT EXISTS idx_role_menu_menu_id ON tb_cm_role_menu (menu_id);
 
-CREATE TABLE IF NOT EXISTS "user_role" (
+CREATE TABLE IF NOT EXISTS "tb_cm_user_role" (
     user_id INTEGER NOT NULL,
     role_id INTEGER NOT NULL,
     use_yn TEXT CHECK (use_yn IN ('Y','N')),
@@ -125,15 +125,15 @@ CREATE TABLE IF NOT EXISTS "user_role" (
     last_updated_date TEXT DEFAULT CURRENT_TIMESTAMP,
     last_updated_by TEXT,
     PRIMARY KEY (user_id, role_id),
-    FOREIGN KEY (user_id) REFERENCES "userEntity"(user_id),
+    FOREIGN KEY (user_id) REFERENCES "tb_cm_user"(user_id),
     FOREIGN KEY (role_id) REFERENCES "tb_cm_role"(role_id)
 );
 
-CREATE INDEX IF NOT EXISTS idx_user_role_user_id
-    ON user_role (user_id);
+CREATE INDEX IF NOT EXISTS idx_tb_cm_user_role_user_id
+    ON tb_cm_user_role (user_id);
 
-CREATE INDEX IF NOT EXISTS idx_user_role_role_id
-    ON user_role (role_id);
+CREATE INDEX IF NOT EXISTS idx_tb_cm_user_role_role_id
+    ON tb_cm_user_role (role_id);
 
 CREATE TABLE IF NOT EXISTS "tb_cm_message" (
     message_cd TEXT NOT NULL,

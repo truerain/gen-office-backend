@@ -20,7 +20,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "user")
+@Table(name = "tb_cm_user")
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -89,7 +89,7 @@ public class UserEntity {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-        name = "user_role",
+        name = "tb_cm_user_role",
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "role_id")
     )
