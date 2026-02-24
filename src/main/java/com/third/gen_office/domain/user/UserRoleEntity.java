@@ -23,6 +23,9 @@ public class UserRoleEntity {
     @Column(name = "role_id")
     private Long roleId;
 
+    @Column(name = "primary_yn")
+    private String primaryYn;
+
     @Column(name = "use_yn")
     private String useYn;
 
@@ -84,6 +87,14 @@ public class UserRoleEntity {
 
     public void setRoleId(Long roleId) {
         this.roleId = roleId;
+    }
+
+    public String getPrimaryYn() {
+        return primaryYn;
+    }
+
+    public void setPrimaryYn(String primaryYn) {
+        this.primaryYn = primaryYn;
     }
 
     public String getUseYn() {

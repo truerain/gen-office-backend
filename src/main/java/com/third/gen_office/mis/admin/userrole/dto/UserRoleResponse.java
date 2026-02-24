@@ -3,6 +3,7 @@ package com.third.gen_office.mis.admin.userrole.dto;
 public record UserRoleResponse(
     Long userId,
     Long roleId,
+    String primaryYn,
     String useYn,
     String attribute1,
     String attribute2,
@@ -15,5 +16,9 @@ public record UserRoleResponse(
     String attribute9,
     String attribute10,
     String createdAt,
-    String updatedAt
+    String updatedAt,
+    String empNo,
+    String empName,
+    String orgName,
+    String roleName
 ) {}

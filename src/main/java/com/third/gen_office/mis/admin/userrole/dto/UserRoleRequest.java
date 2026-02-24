@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record UserRoleRequest(
     @Schema(description = "User id") Long userId,
     @Schema(description = "Role id") Long roleId,
+    @Schema(description = "Primary Y/N") String primaryYn,
     @Schema(description = "Use Y/N") String useYn,
     String attribute1,
     String attribute2,

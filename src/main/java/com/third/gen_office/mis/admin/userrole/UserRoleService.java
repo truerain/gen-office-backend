@@ -1,7 +1,9 @@
 package com.third.gen_office.mis.admin.userrole;
 
 import com.third.gen_office.domain.role.RoleRepository;
+import com.third.gen_office.domain.role.RoleEntity;
 import com.third.gen_office.domain.user.UserRepository;
+import com.third.gen_office.domain.user.UserEntity;
 import com.third.gen_office.domain.user.UserRoleEntity;
 import com.third.gen_office.domain.user.UserRoleId;
 import com.third.gen_office.domain.user.UserRoleRepository;
@@ -15,7 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -43,12 +44,8 @@ public class UserRoleService {
         String useYn,
         String sort
     ) {
-        Specification<UserRoleEntity> spec = buildSpecification(userId, roleId, useYn);
         Sort sortSpec = toSort(sort);
-        List<UserRoleResponse> items = userRoleRepository.findAll(spec, sortSpec).stream()
-            .map(this::toResponse)
-            .toList();
-        return items;
+        return toResponses(userId, roleId, useYn, sortSpec);
     }
 
     @Transactional(readOnly = true)
@@ -56,7 +53,7 @@ public class UserRoleService {
         validateKey(userId, roleId);
         UserRoleEntity entity = userRoleRepository.findById(new UserRoleId(userId, roleId))
             .orElseThrow(() -> new NotFoundException("user_role.not_found"));
-        return toResponse(entity);
+        return toResponse(entity, loadUser(entity.getUserId()), loadRole(entity.getRoleId()));
     }
 
     @Transactional
@@ -70,9 +67,15 @@ public class UserRoleService {
             throw new ConflictException("user_role.duplicate");
         }
 
+        boolean primaryRequested = "Y".equalsIgnoreCase(request.primaryYn());
+        if (primaryRequested) {
+            userRoleRepository.clearPrimaryForUser(request.userId(), request.roleId());
+        }
+
         UserRoleEntity entity = new UserRoleEntity();
         entity.setUserId(request.userId());
         entity.setRoleId(request.roleId());
+        entity.setPrimaryYn(normalizePrimaryYn(request.primaryYn()));
         entity.setUseYn(normalizeUseYn(request.useYn()));
         applyAttributes(entity, request.attribute1(), request.attribute2(), request.attribute3(), request.attribute4(),
             request.attribute5(), request.attribute6(), request.attribute7(), request.attribute8(), request.attribute9(),
@@ -90,15 +93,22 @@ public class UserRoleService {
         UserRoleEntity entity = userRoleRepository.findById(new UserRoleId(userId, roleId))
             .orElseThrow(() -> new NotFoundException("user_role.not_found"));
 
+        if ("Y".equalsIgnoreCase(request.primaryYn())) {
+            userRoleRepository.clearPrimaryForUser(userId, roleId);
+        }
+
         if (StringUtils.hasText(request.useYn())) {
             entity.setUseYn(normalizeUseYn(request.useYn()));
+        }
+        if (StringUtils.hasText(request.primaryYn())) {
+            entity.setPrimaryYn(normalizePrimaryYn(request.primaryYn()));
         }
         applyAttributes(entity, request.attribute1(), request.attribute2(), request.attribute3(), request.attribute4(),
             request.attribute5(), request.attribute6(), request.attribute7(), request.attribute8(), request.attribute9(),
             request.attribute10());
         userRoleRepository.save(entity);
 
-        return toResponse(entity);
+        return toResponse(entity, loadUser(entity.getUserId()), loadRole(entity.getRoleId()));
     }
 
     @Transactional
@@ -108,20 +118,6 @@ public class UserRoleService {
             .orElseThrow(() -> new NotFoundException("user_role.not_found"));
         entity.setUseYn("N");
         userRoleRepository.save(entity);
-    }
-
-    private Specification<UserRoleEntity> buildSpecification(Long userId, Long roleId, String useYn) {
-        Specification<UserRoleEntity> spec = Specification.where(null);
-        if (userId != null) {
-            spec = spec.and((root, query, cb) -> cb.equal(root.get("userId"), userId));
-        }
-        if (roleId != null) {
-            spec = spec.and((root, query, cb) -> cb.equal(root.get("roleId"), roleId));
-        }
-        if (StringUtils.hasText(useYn)) {
-            spec = spec.and((root, query, cb) -> cb.equal(root.get("useYn"), useYn));
-        }
-        return spec;
     }
 
     private Sort toSort(String sort) {
@@ -163,10 +159,38 @@ public class UserRoleService {
         return Sort.by(orders);
     }
 
-    private UserRoleResponse toResponse(UserRoleEntity entity) {
+    private List<UserRoleResponse> toResponses(Long userId, Long roleId, String useYn, Sort sortSpec) {
+        return userRoleRepository.findDetailed(userId, roleId, useYn, sortSpec);
+    }
+
+    private List<UserRoleResponse> toResponses_bk(List<UserRoleEntity> entities) {
+        if (entities.isEmpty()) {
+            return List.of();
+        }
+        List<Long> userIds = entities.stream()
+                .map(UserRoleEntity::getUserId)
+                .distinct()
+                .toList();
+        List<Long> roleIds = entities.stream()
+                .map(UserRoleEntity::getRoleId)
+                .distinct()
+                .toList();
+
+        Map<Long, UserEntity> users = userRepository.findAllById(userIds).stream()
+                .collect(java.util.stream.Collectors.toMap(UserEntity::getUserId, user -> user));
+        Map<Long, RoleEntity> roles = roleRepository.findAllById(roleIds).stream()
+                .collect(java.util.stream.Collectors.toMap(RoleEntity::getRoleId, role -> role));
+
+        return entities.stream()
+                .map(entity -> toResponse(entity, users.get(entity.getUserId()), roles.get(entity.getRoleId())))
+                .toList();
+    }
+
+    private UserRoleResponse toResponse(UserRoleEntity entity, UserEntity user, RoleEntity role) {
         return new UserRoleResponse(
             entity.getUserId(),
             entity.getRoleId(),
+            entity.getPrimaryYn(),
             entity.getUseYn(),
             entity.getAttribute1(),
             entity.getAttribute2(),
@@ -179,8 +203,26 @@ public class UserRoleService {
             entity.getAttribute9(),
             entity.getAttribute10(),
             entity.getCreationDate(),
-            entity.getLastUpdatedDate()
+            entity.getLastUpdatedDate(),
+            user == null ? null : user.getEmpNo(),
+            user == null ? null : user.getEmpName(),
+            user == null ? null : user.getOrgName(),
+            role == null ? null : role.getRoleName()
         );
+    }
+
+    private UserEntity loadUser(Long userId) {
+        if (userId == null) {
+            return null;
+        }
+        return userRepository.findById(userId).orElse(null);
+    }
+
+    private RoleEntity loadRole(Long roleId) {
+        if (roleId == null) {
+            return null;
+        }
+        return roleRepository.findById(roleId).orElse(null);
     }
 
     private void applyAttributes(
@@ -216,6 +258,9 @@ public class UserRoleService {
         if (StringUtils.hasText(request.useYn()) && !isValidUseYn(request.useYn())) {
             throw new BadRequestException("user_role.invalid_request");
         }
+        if (StringUtils.hasText(request.primaryYn()) && !isValidUseYn(request.primaryYn())) {
+            throw new BadRequestException("user_role.invalid_request");
+        }
     }
 
     private void validateUpdateRequest(UserRoleRequest request) {
@@ -223,6 +268,9 @@ public class UserRoleService {
             throw new BadRequestException("user_role.invalid_request");
         }
         if (StringUtils.hasText(request.useYn()) && !isValidUseYn(request.useYn())) {
+            throw new BadRequestException("user_role.invalid_request");
+        }
+        if (StringUtils.hasText(request.primaryYn()) && !isValidUseYn(request.primaryYn())) {
             throw new BadRequestException("user_role.invalid_request");
         }
     }
@@ -245,6 +293,16 @@ public class UserRoleService {
             throw new BadRequestException("user_role.invalid_request");
         }
         return useYn.toUpperCase();
+    }
+
+    private String normalizePrimaryYn(String primaryYn) {
+        if (!StringUtils.hasText(primaryYn)) {
+            return "N";
+        }
+        if (!isValidUseYn(primaryYn)) {
+            throw new BadRequestException("user_role.invalid_request");
+        }
+        return primaryYn.toUpperCase();
     }
 
     private void assertUserExists(Long userId) {

@@ -109,6 +109,7 @@ CREATE INDEX IF NOT EXISTS idx_role_menu_menu_id ON tb_cm_role_menu (menu_id);
 CREATE TABLE IF NOT EXISTS "tb_cm_user_role" (
     user_id INTEGER NOT NULL,
     role_id INTEGER NOT NULL,
+    primary_yn TEXT CHECK (primary_yn IN ('Y', 'N')),
     use_yn TEXT CHECK (use_yn IN ('Y','N')),
     attribute1 TEXT,
     attribute2 TEXT,
