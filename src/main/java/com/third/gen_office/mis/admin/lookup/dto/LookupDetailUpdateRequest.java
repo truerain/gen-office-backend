@@ -1,0 +1,28 @@
+package com.third.gen_office.mis.admin.lookup.dto;
+
+public record LookupDetailUpdateRequest(
+    String lkupName,
+    String lkupNameEng,
+    Integer sortOrder,
+    String useYn,
+    String attribute1,
+    String attribute2,
+    String attribute3,
+    String attribute4,
+    String attribute5,
+    String attribute6,
+    String attribute7,
+    String attribute8,
+    String attribute9,
+    String attribute10,
+    String attribute11,
+    String attribute12,
+    String attribute13,
+    String attribute14,
+    String attribute15,
+    String attribute16,
+    String attribute17,
+    String attribute18,
+    String attribute19,
+    String attribute20
+) {}
