@@ -77,9 +77,6 @@ public class UserRoleService {
         entity.setRoleId(request.roleId());
         entity.setPrimaryYn(normalizePrimaryYn(request.primaryYn()));
         entity.setUseYn(normalizeUseYn(request.useYn()));
-        applyAttributes(entity, request.attribute1(), request.attribute2(), request.attribute3(), request.attribute4(),
-            request.attribute5(), request.attribute6(), request.attribute7(), request.attribute8(), request.attribute9(),
-            request.attribute10());
         userRoleRepository.save(entity);
 
         return get(request.userId(), request.roleId());
@@ -103,9 +100,6 @@ public class UserRoleService {
         if (StringUtils.hasText(request.primaryYn())) {
             entity.setPrimaryYn(normalizePrimaryYn(request.primaryYn()));
         }
-        applyAttributes(entity, request.attribute1(), request.attribute2(), request.attribute3(), request.attribute4(),
-            request.attribute5(), request.attribute6(), request.attribute7(), request.attribute8(), request.attribute9(),
-            request.attribute10());
         userRoleRepository.save(entity);
 
         return toResponse(entity, loadUser(entity.getUserId()), loadRole(entity.getRoleId()));
@@ -169,18 +163,6 @@ public class UserRoleService {
             entity.getRoleId(),
             entity.getPrimaryYn(),
             entity.getUseYn(),
-            entity.getAttribute1(),
-            entity.getAttribute2(),
-            entity.getAttribute3(),
-            entity.getAttribute4(),
-            entity.getAttribute5(),
-            entity.getAttribute6(),
-            entity.getAttribute7(),
-            entity.getAttribute8(),
-            entity.getAttribute9(),
-            entity.getAttribute10(),
-            entity.getCreationDate(),
-            entity.getLastUpdatedDate(),
             user == null ? null : user.getEmpNo(),
             user == null ? null : user.getEmpName(),
             user == null ? null : user.getOrgName(),
@@ -200,31 +182,6 @@ public class UserRoleService {
             return null;
         }
         return roleRepository.findById(roleId).orElse(null);
-    }
-
-    private void applyAttributes(
-        UserRoleEntity entity,
-        String attribute1,
-        String attribute2,
-        String attribute3,
-        String attribute4,
-        String attribute5,
-        String attribute6,
-        String attribute7,
-        String attribute8,
-        String attribute9,
-        String attribute10
-    ) {
-        entity.setAttribute1(attribute1);
-        entity.setAttribute2(attribute2);
-        entity.setAttribute3(attribute3);
-        entity.setAttribute4(attribute4);
-        entity.setAttribute5(attribute5);
-        entity.setAttribute6(attribute6);
-        entity.setAttribute7(attribute7);
-        entity.setAttribute8(attribute8);
-        entity.setAttribute9(attribute9);
-        entity.setAttribute10(attribute10);
     }
 
     private void validateCreateRequest(UserRoleRequest request) {

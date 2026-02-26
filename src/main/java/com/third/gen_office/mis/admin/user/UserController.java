@@ -1,11 +1,12 @@
 package com.third.gen_office.mis.admin.user;
 
-import com.third.gen_office.domain.user.UserEntity;
+import com.third.gen_office.global.error.NotFoundException;
+import com.third.gen_office.mis.admin.user.dto.UserRequest;
+import com.third.gen_office.mis.admin.user.dto.UserResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
-import com.third.gen_office.global.error.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,8 +31,8 @@ public class UserController {
 
     @GetMapping
     @Operation(summary = "사용자 목록 조회")
-    public List<UserEntity> list(
-        @Parameter(description = "이름 검색(부분 일치)") @RequestParam(required = false) String empName
+    public List<UserResponse> list(
+        @Parameter(description = "사원명 검색(부분일치)") @RequestParam(required = false) String empName
     ) {
         if (empName == null || empName.isBlank()) {
             return userService.list();
@@ -41,25 +42,25 @@ public class UserController {
 
     @GetMapping("/{id}")
     @Operation(summary = "사용자 단건 조회")
-    public ResponseEntity<UserEntity> get(@Parameter(description = "user id") @PathVariable Long id) {
-        UserEntity userEntity = userService.get(id)
+    public ResponseEntity<UserResponse> get(@Parameter(description = "user id") @PathVariable Long id) {
+        UserResponse userEntity = userService.get(id)
             .orElseThrow(() -> new NotFoundException("user.not_found"));
         return ResponseEntity.ok(userEntity);
     }
 
     @PostMapping
     @Operation(summary = "사용자 생성")
-    public ResponseEntity<UserEntity> create(@RequestBody UserRequest request) {
+    public ResponseEntity<UserResponse> create(@RequestBody UserRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(request));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "사용자 수정")
-    public ResponseEntity<UserEntity> update(
+    public ResponseEntity<UserResponse> update(
         @Parameter(description = "user id") @PathVariable Long id,
         @RequestBody UserRequest request
     ) {
-        UserEntity userEntity = userService.update(id, request)
+        UserResponse userEntity = userService.update(id, request)
             .orElseThrow(() -> new NotFoundException("user.not_found"));
         return ResponseEntity.ok(userEntity);
     }

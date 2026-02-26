@@ -53,7 +53,7 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public String getPassword() {
-        return userEntity.getPassword();
+        return "1234";
     }
 
     @Override

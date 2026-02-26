@@ -30,7 +30,7 @@ public class NoticeResponse {
                     entity.getUseYn(),
                     entity.getReadCount(),
                     entity.getLastUpdatedBy(),
-                    entity.getLastUpdatedDate()
+                    entity.getLastUpdatedDate() == null ? null : entity.getLastUpdatedDate().toString()
             );
         }
     }
@@ -59,7 +59,7 @@ public class NoticeResponse {
                     entity.getUseYn(),
                     entity.getReadCount(),
                     entity.getLastUpdatedBy(),
-                    entity.getLastUpdatedDate()
+                    entity.getLastUpdatedDate() == null ? null : entity.getLastUpdatedDate().toString()
             );
         }
     }

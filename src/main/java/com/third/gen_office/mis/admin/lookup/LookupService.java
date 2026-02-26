@@ -368,7 +368,7 @@ public class LookupService {
             entity.getAttribute10(),
             entity.getLastUpdatedBy(),
             updatedByName,
-            entity.getLastUpdatedDate()
+            entity.getLastUpdatedDate() == null ? null : entity.getLastUpdatedDate().toString()
         );
     }
 
@@ -392,7 +392,7 @@ public class LookupService {
             entity.getAttribute10(),
             entity.getLastUpdatedBy(),
             updatedByName,
-            entity.getLastUpdatedDate()
+            entity.getLastUpdatedDate() == null ? null : entity.getLastUpdatedDate().toString()
         );
     }
 

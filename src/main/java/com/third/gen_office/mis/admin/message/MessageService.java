@@ -242,8 +242,8 @@ public class MessageService {
             entity.getMessageCd(),
             entity.getLangCd(),
             entity.getMessageTxt(),
-            entity.getCreationDate(),
-            entity.getLastUpdatedDate()
+            entity.getCreationDate() == null ? null : entity.getCreationDate().toString(),
+            entity.getLastUpdatedDate() == null ? null : entity.getLastUpdatedDate().toString()
         );
     }
 

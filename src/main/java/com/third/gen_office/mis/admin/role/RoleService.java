@@ -79,7 +79,7 @@ public class RoleService {
             role.getUseYn(),
             role.getLastUpdatedBy(),
             updatedByName,
-            role.getLastUpdatedDate()
+            role.getLastUpdatedDate() == null ? null : role.getLastUpdatedDate().toString()
         );
     }
 }

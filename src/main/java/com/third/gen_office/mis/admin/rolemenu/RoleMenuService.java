@@ -76,7 +76,7 @@ public class RoleMenuService {
             entity.getUseYn(),
             entity.getLastUpdatedBy(),
             updatedByName,
-            entity.getLastUpdatedDate()
+            entity.getLastUpdatedDate() == null ? null : entity.getLastUpdatedDate().toString()
         );
     }
 }

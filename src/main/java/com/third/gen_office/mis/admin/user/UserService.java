@@ -1,9 +1,13 @@
 package com.third.gen_office.mis.admin.user;
 
-import java.util.List;
-import java.util.Optional;
 import com.third.gen_office.domain.user.UserEntity;
 import com.third.gen_office.domain.user.UserRepository;
+import com.third.gen_office.mis.admin.user.dto.UserRequest;
+import com.third.gen_office.mis.admin.user.dto.UserResponse;
+import com.third.gen_office.mis.common.util.LastUpdatedByResolver;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -11,35 +15,54 @@ import org.springframework.stereotype.Service;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final LastUpdatedByResolver lastUpdatedByResolver;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(
+        UserRepository userRepository,
+        PasswordEncoder passwordEncoder,
+        LastUpdatedByResolver lastUpdatedByResolver
+    ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.lastUpdatedByResolver = lastUpdatedByResolver;
     }
 
-    public List<UserEntity> list() {
-        return userRepository.findAll();
+    public List<UserResponse> list() {
+        List<UserEntity> entities = userRepository.findAll();
+        Map<String, String> updatedByNames = lastUpdatedByResolver.loadLastUpdatedByNames(entities);
+        return entities.stream()
+            .map(entity -> toResponse(entity, updatedByNames.get(entity.getLastUpdatedBy())))
+            .toList();
     }
 
-    public List<UserEntity> listByEmpName(String empName) {
-        return userRepository.findByEmpNameContainingIgnoreCase(empName);
+    public List<UserResponse> listByEmpName(String empName) {
+        List<UserEntity> entities = userRepository.findByEmpNameContainingIgnoreCase(empName);
+        Map<String, String> updatedByNames = lastUpdatedByResolver.loadLastUpdatedByNames(entities);
+        return entities.stream()
+            .map(entity -> toResponse(entity, updatedByNames.get(entity.getLastUpdatedBy())))
+            .toList();
     }
 
-    public Optional<UserEntity> get(Long id) {
-        return userRepository.findById(id);
+    public Optional<UserResponse> get(Long id) {
+        return userRepository.findById(id)
+            .map(entity -> toResponse(entity, lastUpdatedByResolver.resolveLastUpdatedByName(entity.getLastUpdatedBy())));
     }
 
-    public UserEntity create(UserRequest request) {
+    public UserResponse create(UserRequest request) {
         UserEntity userEntity = new UserEntity();
         applyRequest(userEntity, request);
-        return userRepository.save(userEntity);
+        UserEntity saved = userRepository.save(userEntity);
+        String updatedByName = lastUpdatedByResolver.resolveLastUpdatedByName(saved.getLastUpdatedBy());
+        return toResponse(saved, updatedByName);
     }
 
-    public Optional<UserEntity> update(Long id, UserRequest request) {
+    public Optional<UserResponse> update(Long id, UserRequest request) {
         return userRepository.findById(id)
             .map(user -> {
                 applyRequest(user, request);
-                return userRepository.save(user);
+                UserEntity saved = userRepository.save(user);
+                String updatedByName = lastUpdatedByResolver.resolveLastUpdatedByName(saved.getLastUpdatedBy());
+                return toResponse(saved, updatedByName);
             });
     }
 
@@ -66,17 +89,25 @@ public class UserService {
         userEntity.setWorkTel(request.workTel());
         userEntity.setMobileTel(request.mobileTel());
         userEntity.setLangCd(request.langCd());
-        userEntity.setAttribute1(request.attribute1());
-        userEntity.setAttribute2(request.attribute2());
-        userEntity.setAttribute3(request.attribute3());
-        userEntity.setAttribute4(request.attribute4());
-        userEntity.setAttribute5(request.attribute5());
-        userEntity.setAttribute6(request.attribute6());
-        userEntity.setAttribute7(request.attribute7());
-        userEntity.setAttribute8(request.attribute8());
-        userEntity.setAttribute9(request.attribute9());
-        userEntity.setAttribute10(request.attribute10());
-        userEntity.setCreatedBy(request.createdBy());
-        userEntity.setLastUpdatedBy(request.lastUpdatedBy());
+    }
+
+    private UserResponse toResponse(UserEntity entity, String updatedByName) {
+        return new UserResponse(
+            entity.getUserId(),
+            entity.getEmpNo(),
+            entity.getEmpName(),
+            entity.getEmpNameEng(),
+            entity.getEmail(),
+            entity.getOrgId(),
+            entity.getOrgName(),
+            entity.getTitleCd(),
+            entity.getTitleName(),
+            entity.getWorkTel(),
+            entity.getMobileTel(),
+            entity.getLangCd(),
+            entity.getLastUpdatedBy(),
+            updatedByName,
+            entity.getLastUpdatedDate() == null ? null : entity.getLastUpdatedDate().toString()
+        );
     }
 }

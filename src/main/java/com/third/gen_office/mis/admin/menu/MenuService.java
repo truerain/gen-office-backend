@@ -104,7 +104,7 @@ public class MenuService {
             menu.getSortOrder(),
             menu.getLastUpdatedBy(),
             updatedByName,
-            menu.getLastUpdatedDate()
+            menu.getLastUpdatedDate() == null ? null : menu.getLastUpdatedDate().toString()
         );
     }
 }

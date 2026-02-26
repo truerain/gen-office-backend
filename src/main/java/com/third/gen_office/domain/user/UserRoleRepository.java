@@ -21,18 +21,6 @@ public interface UserRoleRepository extends JpaRepository<UserRoleEntity, UserRo
             ur.roleId,
             ur.primaryYn,
             ur.useYn,
-            ur.attribute1,
-            ur.attribute2,
-            ur.attribute3,
-            ur.attribute4,
-            ur.attribute5,
-            ur.attribute6,
-            ur.attribute7,
-            ur.attribute8,
-            ur.attribute9,
-            ur.attribute10,
-            ur.creationDate,
-            ur.lastUpdatedDate,
             u.empNo,
             u.empName,
             u.orgName,
@@ -58,18 +46,6 @@ public interface UserRoleRepository extends JpaRepository<UserRoleEntity, UserRo
             ur.roleId,
             ur.primaryYn,
             ur.useYn,
-            ur.attribute1,
-            ur.attribute2,
-            ur.attribute3,
-            ur.attribute4,
-            ur.attribute5,
-            ur.attribute6,
-            ur.attribute7,
-            ur.attribute8,
-            ur.attribute9,
-            ur.attribute10,
-            ur.creationDate,
-            ur.lastUpdatedDate,
             u.empNo,
             u.empName,
             u.orgName,
@@ -91,5 +67,14 @@ public interface UserRoleRepository extends JpaRepository<UserRoleEntity, UserRo
           and ur.roleId <> :roleId
         """)
     int clearPrimaryForUser(@Param("userId") Long userId, @Param("roleId") Long roleId);
+
+    @Query("""
+        select r.roleCd
+        from UserRoleEntity ur
+        join RoleEntity r on r.roleId = ur.roleId
+        where ur.userId = :userId
+          and ur.useYn = :useYn
+        """)
+    List<String> findRoleCdsByUserId(@Param("userId") Long userId, @Param("useYn") String useYn);
 
 }
