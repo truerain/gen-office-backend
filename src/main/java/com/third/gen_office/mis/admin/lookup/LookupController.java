@@ -1,17 +1,16 @@
 package com.third.gen_office.mis.admin.lookup;
 
-import com.third.gen_office.mis.admin.lookup.dto.LookupClassCreateRequest;
-import com.third.gen_office.mis.admin.lookup.dto.LookupClassListResponse;
-import com.third.gen_office.mis.admin.lookup.dto.LookupClassResponse;
-import com.third.gen_office.mis.admin.lookup.dto.LookupClassUpdateRequest;
+import com.third.gen_office.mis.admin.lookup.dto.LookupMasterCreateRequest;
+import com.third.gen_office.mis.admin.lookup.dto.LookupMasterResponse;
+import com.third.gen_office.mis.admin.lookup.dto.LookupMasterUpdateRequest;
 import com.third.gen_office.mis.admin.lookup.dto.LookupDetailCreateRequest;
-import com.third.gen_office.mis.admin.lookup.dto.LookupDetailListResponse;
 import com.third.gen_office.mis.admin.lookup.dto.LookupDetailResponse;
 import com.third.gen_office.mis.admin.lookup.dto.LookupDetailUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @Tag(name = "Lookup", description = "Lookup code admin API")
 @RestController
@@ -32,60 +33,62 @@ public class LookupController {
         this.lookupService = lookupService;
     }
 
-    @GetMapping("/classes")
-    @Operation(summary = "List lookup classes")
-    public LookupClassListResponse listClasses(
+    @GetMapping("/masters")
+    @Operation(summary = "List lookup masters")
+    public List<LookupMasterResponse> listLkupMaster(
         @RequestParam(value = "lkupClssCd", required = false) String lkupClssCd,
         @RequestParam(value = "lkupClssName", required = false) String lkupClssName,
         @RequestParam(value = "useYn", required = false) String useYn,
         @RequestParam(value = "q", required = false) String q,
-        @RequestParam(value = "page", required = false, defaultValue = "0") int page,
-        @RequestParam(value = "size", required = false, defaultValue = "20") int size,
         @RequestParam(value = "sort", required = false) String sort
     ) {
-        return lookupService.listClasses(lkupClssCd, lkupClssName, useYn, q, page, size, sort);
+        return lookupService.listMasters(lkupClssCd, lkupClssName, useYn, q, sort);
     }
 
-    @GetMapping("/classes/{lkupClssCd}")
-    @Operation(summary = "Get lookup class")
-    public LookupClassResponse getClass(
+    @GetMapping("/masters/{lkupClssCd}")
+    @Operation(summary = "Get lookup master")
+    public LookupMasterResponse getClass(
         @Parameter(description = "lookup class code") @PathVariable String lkupClssCd
     ) {
-        return lookupService.getClass(lkupClssCd);
+        return lookupService.getMaster(lkupClssCd);
     }
 
-    @PostMapping("/classes")
-    @Operation(summary = "Create lookup class")
-    public ResponseEntity<LookupClassResponse> createClass(@RequestBody LookupClassCreateRequest request) {
-        LookupClassResponse response = lookupService.createClass(request);
+    @PostMapping(value = "/masters", consumes = {
+        MediaType.APPLICATION_JSON_VALUE,
+        "application/json;charset=UTF-8"
+    })
+    @Operation(summary = "Create lookup master")
+    public ResponseEntity<LookupMasterResponse> createNaster(@RequestBody LookupMasterCreateRequest request) {
+        LookupMasterResponse response = lookupService.createMaster(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PutMapping("/classes/{lkupClssCd}")
-    @Operation(summary = "Update lookup class")
-    public LookupClassResponse updateClass(
+    @PutMapping(value = "/masters/{lkupClssCd}", consumes = {
+        MediaType.APPLICATION_JSON_VALUE,
+        "application/json;charset=UTF-8"
+    })
+    @Operation(summary = "Update lookup master")
+    public LookupMasterResponse updateLkupMaster(
         @Parameter(description = "lookup class code") @PathVariable String lkupClssCd,
-        @RequestBody LookupClassUpdateRequest request
+        @RequestBody LookupMasterUpdateRequest request
     ) {
-        return lookupService.updateClass(lkupClssCd, request);
+        return lookupService.updateMaster(lkupClssCd, request);
     }
 
-    @GetMapping("/{lkupClssCd}/items")
+    @GetMapping("/{lkupClssCd}/details")
     @Operation(summary = "List lookup details")
-    public LookupDetailListResponse listDetails(
+    public List<LookupDetailResponse> listDetails(
         @Parameter(description = "lookup class code") @PathVariable String lkupClssCd,
         @RequestParam(value = "lkupCd", required = false) String lkupCd,
         @RequestParam(value = "lkupName", required = false) String lkupName,
         @RequestParam(value = "useYn", required = false) String useYn,
         @RequestParam(value = "q", required = false) String q,
-        @RequestParam(value = "page", required = false, defaultValue = "0") int page,
-        @RequestParam(value = "size", required = false, defaultValue = "50") int size,
         @RequestParam(value = "sort", required = false) String sort
     ) {
-        return lookupService.listDetails(lkupClssCd, lkupCd, lkupName, useYn, q, page, size, sort);
+        return lookupService.listDetails(lkupClssCd, lkupCd, lkupName, useYn, q, sort);
     }
 
-    @GetMapping("/{lkupClssCd}/items/{lkupCd}")
+    @GetMapping("/{lkupClssCd}/details/{lkupCd}")
     @Operation(summary = "Get lookup detail")
     public LookupDetailResponse getDetail(
         @Parameter(description = "lookup class code") @PathVariable String lkupClssCd,
@@ -94,7 +97,7 @@ public class LookupController {
         return lookupService.getDetail(lkupClssCd, lkupCd);
     }
 
-    @PostMapping("/{lkupClssCd}/items")
+    @PostMapping("/{lkupClssCd}/details")
     @Operation(summary = "Create lookup detail")
     public ResponseEntity<LookupDetailResponse> createDetail(
         @Parameter(description = "lookup class code") @PathVariable String lkupClssCd,
@@ -104,7 +107,7 @@ public class LookupController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PutMapping("/{lkupClssCd}/items/{lkupCd}")
+    @PutMapping("/{lkupClssCd}/details/{lkupCd}")
     @Operation(summary = "Update lookup detail")
     public LookupDetailResponse updateDetail(
         @Parameter(description = "lookup class code") @PathVariable String lkupClssCd,

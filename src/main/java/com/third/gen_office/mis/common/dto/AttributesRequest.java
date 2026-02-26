@@ -1,11 +1,6 @@
-package com.third.gen_office.mis.admin.lookup.dto;
+package com.third.gen_office.mis.common.dto;
 
-public record LookupDetailCreateRequest(
-    String lkupCd,
-    String lkupName,
-    String lkupNameEng,
-    Integer sortOrder,
-    String useYn,
+public record AttributesRequest(
     String attribute1,
     String attribute2,
     String attribute3,

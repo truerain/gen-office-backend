@@ -3,39 +3,66 @@ package com.third.gen_office.mis.admin.menu;
 import com.third.gen_office.domain.menu.MenuEntity;
 import com.third.gen_office.domain.menu.MenuRepository;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+
+import com.third.gen_office.mis.admin.menu.dto.MenuRequest;
+import com.third.gen_office.mis.admin.menu.dto.MenuResponse;
+import com.third.gen_office.mis.common.util.LastUpdatedByResolver;
 import org.springframework.stereotype.Service;
 
 @Service
 public class MenuService {
     private final MenuRepository menuRepository;
 
-    public MenuService(MenuRepository menuRepository) {
+    private final LastUpdatedByResolver lastUpdatedByResolver;
+
+    public MenuService(MenuRepository menuRepository,
+                       LastUpdatedByResolver lastUpdatedByResolver) {
         this.menuRepository = menuRepository;
+        this.lastUpdatedByResolver = lastUpdatedByResolver;
     }
 
-    public List<MenuEntity> list() {
-        return menuRepository.findAll();
+    public List<MenuResponse> list() {
+        List<MenuEntity> entities = menuRepository.findAll();
+        Map<String, String> updatedByNames = lastUpdatedByResolver.loadLastUpdatedByNames(entities);
+
+        return entities.stream()
+            .map(entity -> toResponse(entity, updatedByNames.get(entity.getLastUpdatedBy())) )
+            .toList();
     }
 
-    public List<MenuEntity> chiidlMenu(Long id) { return menuRepository.findByParentMenuId(id); }
+    public List<MenuResponse> childMenu(Long id) {
+        List<MenuEntity> entities = menuRepository.findByParentMenuId(id);
+        Map<String, String> updatedByNames = lastUpdatedByResolver.loadLastUpdatedByNames(entities);
 
-    public Optional<MenuEntity> get(Long id) {
-        return menuRepository.findById(id);
+        return entities
+            .stream()
+            .map(entity -> toResponse(entity, updatedByNames.get(entity.getLastUpdatedBy())) )
+            .toList();
     }
 
-    public MenuEntity create(MenuRequest request) {
+    public Optional<MenuResponse> get(Long id) {
+        return menuRepository.findById(id)
+            .map(menu -> toResponse(menu, lastUpdatedByResolver.resolveLastUpdatedByName(menu.getLastUpdatedBy())));
+    }
+
+    public MenuResponse create(MenuRequest request) {
         MenuEntity menu = new MenuEntity();
         applyRequest(menu, request);
         menu.setMenuId(request.menuId());
-        return menuRepository.save(menu);
+        MenuEntity saved = menuRepository.save(menu);
+        String updatedByName = lastUpdatedByResolver.resolveLastUpdatedByName(saved.getLastUpdatedBy());
+        return toResponse(saved, updatedByName);
     }
 
-    public Optional<MenuEntity> update(Long id, MenuRequest request) {
+    public Optional<MenuResponse> update(Long id, MenuRequest request) {
         return menuRepository.findById(id)
             .map(menu -> {
                 applyRequest(menu, request);
-                return menuRepository.save(menu);
+                MenuEntity saved = menuRepository.save(menu);
+                String updatedByName = lastUpdatedByResolver.resolveLastUpdatedByName(saved.getLastUpdatedBy());
+                return toResponse(saved, updatedByName);
             });
     }
 
@@ -59,17 +86,25 @@ public class MenuService {
         menu.setDisplayYn(request.displayYn());
         menu.setUseYn(request.useYn());
         menu.setSortOrder(request.sortOrder());
-        menu.setAttribute1(request.attribute1());
-        menu.setAttribute2(request.attribute2());
-        menu.setAttribute3(request.attribute3());
-        menu.setAttribute4(request.attribute4());
-        menu.setAttribute5(request.attribute5());
-        menu.setAttribute6(request.attribute6());
-        menu.setAttribute7(request.attribute7());
-        menu.setAttribute8(request.attribute8());
-        menu.setAttribute9(request.attribute9());
-        menu.setAttribute10(request.attribute10());
-        menu.setCreatedBy(request.createdBy());
-        menu.setLastUpdatedBy(request.lastUpdatedBy());
+    }
+
+    private MenuResponse toResponse(MenuEntity menu, String updatedByName) {
+        return new MenuResponse(
+            menu.getMenuId(),
+            menu.getMenuName(),
+            menu.getMenuNameEng(),
+            menu.getMenuDesc(),
+            menu.getMenuDescEng(),
+            menu.getMenuLevel(),
+            menu.getExecComponent(),
+            menu.getMenuIcon(),
+            menu.getParentMenuId(),
+            menu.getDisplayYn(),
+            menu.getUseYn(),
+            menu.getSortOrder(),
+            menu.getLastUpdatedBy(),
+            updatedByName,
+            menu.getLastUpdatedDate()
+        );
     }
 }

@@ -7,5 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
     Optional<UserEntity> findByEmpNo(String empNo);
+    List<UserEntity> findByEmpNoIn(List<String> empNos);
     List<UserEntity> findByEmpNameContainingIgnoreCase(String empName);
 }

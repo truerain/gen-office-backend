@@ -17,16 +17,7 @@ public record LookupDetailResponse(
     String attribute8,
     String attribute9,
     String attribute10,
-    String attribute11,
-    String attribute12,
-    String attribute13,
-    String attribute14,
-    String attribute15,
-    String attribute16,
-    String attribute17,
-    String attribute18,
-    String attribute19,
-    String attribute20,
-    String createdAt,
-    String updatedAt
+    String lastUpdatedBy,
+    String lastUpdatedByName,
+    String lastUpdatedAt
 ) {}

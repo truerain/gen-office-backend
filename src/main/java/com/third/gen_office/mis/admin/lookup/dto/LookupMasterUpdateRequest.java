@@ -1,7 +1,6 @@
 package com.third.gen_office.mis.admin.lookup.dto;
 
-public record LookupClassResponse(
-    String lkupClssCd,
+public record LookupMasterUpdateRequest(
     String lkupClssName,
     String lkupClssDesc,
     String useYn,
@@ -14,7 +13,5 @@ public record LookupClassResponse(
     String attribute7,
     String attribute8,
     String attribute9,
-    String attribute10,
-    String createdAt,
-    String updatedAt
+    String attribute10
 ) {}

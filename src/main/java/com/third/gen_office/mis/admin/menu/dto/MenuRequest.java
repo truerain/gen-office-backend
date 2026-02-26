@@ -1,4 +1,4 @@
-package com.third.gen_office.mis.admin.menu;
+package com.third.gen_office.mis.admin.menu.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -15,17 +15,5 @@ public record MenuRequest(
     @Schema(description = "상위 메뉴 ID") Long parentMenuId,
     @Schema(description = "표시 여부") String displayYn,
     @Schema(description = "사용 여부") String useYn,
-    @Schema(description = "정렬 순서") Integer sortOrder,
-    @Schema(description = "속성1") String attribute1,
-    @Schema(description = "속성2") String attribute2,
-    @Schema(description = "속성3") String attribute3,
-    @Schema(description = "속성4") String attribute4,
-    @Schema(description = "속성5") String attribute5,
-    @Schema(description = "속성6") String attribute6,
-    @Schema(description = "속성7") String attribute7,
-    @Schema(description = "속성8") String attribute8,
-    @Schema(description = "속성9") String attribute9,
-    @Schema(description = "속성10") String attribute10,
-    @Schema(description = "생성자") String createdBy,
-    @Schema(description = "수정자") String lastUpdatedBy
+    @Schema(description = "정렬 순서") Integer sortOrder
 ) {}

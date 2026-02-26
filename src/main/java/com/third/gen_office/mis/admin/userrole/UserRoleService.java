@@ -163,29 +163,6 @@ public class UserRoleService {
         return userRoleRepository.findDetailed(userId, roleId, useYn, sortSpec);
     }
 
-    private List<UserRoleResponse> toResponses_bk(List<UserRoleEntity> entities) {
-        if (entities.isEmpty()) {
-            return List.of();
-        }
-        List<Long> userIds = entities.stream()
-                .map(UserRoleEntity::getUserId)
-                .distinct()
-                .toList();
-        List<Long> roleIds = entities.stream()
-                .map(UserRoleEntity::getRoleId)
-                .distinct()
-                .toList();
-
-        Map<Long, UserEntity> users = userRepository.findAllById(userIds).stream()
-                .collect(java.util.stream.Collectors.toMap(UserEntity::getUserId, user -> user));
-        Map<Long, RoleEntity> roles = roleRepository.findAllById(roleIds).stream()
-                .collect(java.util.stream.Collectors.toMap(RoleEntity::getRoleId, role -> role));
-
-        return entities.stream()
-                .map(entity -> toResponse(entity, users.get(entity.getUserId()), roles.get(entity.getRoleId())))
-                .toList();
-    }
-
     private UserRoleResponse toResponse(UserRoleEntity entity, UserEntity user, RoleEntity role) {
         return new UserRoleResponse(
             entity.getUserId(),

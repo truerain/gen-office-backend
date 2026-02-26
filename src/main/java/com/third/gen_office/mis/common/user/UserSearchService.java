@@ -33,6 +33,8 @@ public class UserSearchService {
             entity.getUserId(),
             entity.getEmpNo(),
             entity.getEmpName(),
+            entity.getTitleCd(),
+            entity.getTitleName(),
             entity.getOrgId(),
             entity.getOrgName()
         );

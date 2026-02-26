@@ -1,6 +1,7 @@
 package com.third.gen_office.mis.admin.rolemenu;
 
-import com.third.gen_office.domain.role.RoleMenuEntity;
+import com.third.gen_office.mis.admin.rolemenu.dto.RoleMenuRequest;
+import com.third.gen_office.mis.admin.rolemenu.dto.RoleMenuResponse;
 import com.third.gen_office.mis.admin.rolemenu.dto.RoleMenuView;
 import com.third.gen_office.global.error.NotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,7 +31,7 @@ public class RoleMenuController {
 
     @GetMapping
     @Operation(summary = "List role menu mappings")
-    public List<RoleMenuEntity> list(
+    public List<RoleMenuResponse> list(
         @Parameter(description = "role id") @RequestParam(required = false) Long roleId,
         @Parameter(description = "menu id") @RequestParam(required = false) Long menuId
     ) {
@@ -39,11 +40,11 @@ public class RoleMenuController {
 
     @GetMapping("/{roleId}/{menuId}")
     @Operation(summary = "Get role menu mapping")
-    public ResponseEntity<RoleMenuEntity> get(
+    public ResponseEntity<RoleMenuResponse> get(
         @Parameter(description = "role id") @PathVariable Long roleId,
         @Parameter(description = "menu id") @PathVariable Long menuId
     ) {
-        RoleMenuEntity roleMenu = roleMenuService.get(roleId, menuId)
+        RoleMenuResponse roleMenu = roleMenuService.get(roleId, menuId)
             .orElseThrow(() -> new NotFoundException("role_menu.not_found"));
         return ResponseEntity.ok(roleMenu);
     }
@@ -58,7 +59,7 @@ public class RoleMenuController {
 
     @PostMapping
     @Operation(summary = "Create role menu mapping")
-    public ResponseEntity<RoleMenuEntity> create(@RequestBody RoleMenuRequest request) {
+    public ResponseEntity<RoleMenuResponse> create(@RequestBody RoleMenuRequest request) {
         return roleMenuService.create(request)
             .map(roleMenu -> ResponseEntity.status(HttpStatus.CREATED).body(roleMenu))
             .orElseGet(() -> ResponseEntity.status(HttpStatus.BAD_REQUEST).build());

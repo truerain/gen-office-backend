@@ -2,37 +2,52 @@ package com.third.gen_office.mis.admin.role;
 
 import com.third.gen_office.domain.role.RoleEntity;
 import com.third.gen_office.domain.role.RoleRepository;
+import com.third.gen_office.mis.admin.role.dto.RoleRequest;
+import com.third.gen_office.mis.admin.role.dto.RoleResponse;
+import com.third.gen_office.mis.common.util.LastUpdatedByResolver;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 @Service
 public class RoleService {
     private final RoleRepository roleRepository;
+    private final LastUpdatedByResolver lastUpdatedByResolver;
 
-    public RoleService(RoleRepository roleRepository) {
+    public RoleService(RoleRepository roleRepository, LastUpdatedByResolver lastUpdatedByResolver) {
         this.roleRepository = roleRepository;
+        this.lastUpdatedByResolver = lastUpdatedByResolver;
     }
 
-    public List<RoleEntity> list() {
-        return roleRepository.findAll();
+    public List<RoleResponse> list() {
+        List<RoleEntity> entities = roleRepository.findAll();
+        Map<String, String> updatedByNames = lastUpdatedByResolver.loadLastUpdatedByNames(entities);
+        return entities.stream()
+            .map(entity -> toResponse(entity, updatedByNames.get(entity.getLastUpdatedBy())))
+            .toList();
     }
 
-    public Optional<RoleEntity> get(Long id) {
-        return roleRepository.findById(id);
+    public Optional<RoleResponse> get(Long id) {
+        return roleRepository.findById(id)
+            .map(role -> toResponse(role, lastUpdatedByResolver.resolveLastUpdatedByName(role.getLastUpdatedBy())));
     }
 
-    public RoleEntity create(RoleRequest request) {
+    public RoleResponse create(RoleRequest request) {
         RoleEntity role = new RoleEntity();
         applyRequest(role, request);
-        return roleRepository.save(role);
+        RoleEntity saved = roleRepository.save(role);
+        String updatedByName = lastUpdatedByResolver.resolveLastUpdatedByName(saved.getLastUpdatedBy());
+        return toResponse(saved, updatedByName);
     }
 
-    public Optional<RoleEntity> update(Long id, RoleRequest request) {
+    public Optional<RoleResponse> update(Long id, RoleRequest request) {
         return roleRepository.findById(id)
             .map(role -> {
                 applyRequest(role, request);
-                return roleRepository.save(role);
+                RoleEntity saved = roleRepository.save(role);
+                String updatedByName = lastUpdatedByResolver.resolveLastUpdatedByName(saved.getLastUpdatedBy());
+                return toResponse(saved, updatedByName);
             });
     }
 
@@ -51,17 +66,20 @@ public class RoleService {
         role.setRoleDesc(request.roleDesc());
         role.setSortOrder(request.sortOrder());
         role.setUseYn(request.useYn());
-        role.setAttribute1(request.attribute1());
-        role.setAttribute2(request.attribute2());
-        role.setAttribute3(request.attribute3());
-        role.setAttribute4(request.attribute4());
-        role.setAttribute5(request.attribute5());
-        role.setAttribute6(request.attribute6());
-        role.setAttribute7(request.attribute7());
-        role.setAttribute8(request.attribute8());
-        role.setAttribute9(request.attribute9());
-        role.setAttribute10(request.attribute10());
-        role.setCreatedBy(request.createdBy());
-        role.setLastUpdatedBy(request.lastUpdatedBy());
+    }
+
+    private RoleResponse toResponse(RoleEntity role, String updatedByName) {
+        return new RoleResponse(
+            role.getRoleId(),
+            role.getRoleCd(),
+            role.getRoleName(),
+            role.getRoleNameEng(),
+            role.getRoleDesc(),
+            role.getSortOrder(),
+            role.getUseYn(),
+            role.getLastUpdatedBy(),
+            updatedByName,
+            role.getLastUpdatedDate()
+        );
     }
 }

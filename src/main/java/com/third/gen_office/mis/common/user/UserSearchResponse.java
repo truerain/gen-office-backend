@@ -4,6 +4,8 @@ public record UserSearchResponse(
     Long userId,
     String empNo,
     String empName,
+    String titleCd,
+    String titleName,
     String orgId,
     String orgName
 ) {}

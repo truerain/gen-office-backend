@@ -1,7 +1,8 @@
 package com.third.gen_office.mis.admin.role;
 
 import com.third.gen_office.global.error.NotFoundException;
-import com.third.gen_office.domain.role.RoleEntity;
+import com.third.gen_office.mis.admin.role.dto.RoleRequest;
+import com.third.gen_office.mis.admin.role.dto.RoleResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,31 +30,31 @@ public class RoleController {
 
     @GetMapping
     @Operation(summary = "List roles")
-    public List<RoleEntity> list() {
+    public List<RoleResponse> list() {
         return roleService.list();
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get role")
-    public ResponseEntity<RoleEntity> get(@Parameter(description = "role id") @PathVariable Long id) {
-        RoleEntity role = roleService.get(id)
+    public ResponseEntity<RoleResponse> get(@Parameter(description = "role id") @PathVariable Long id) {
+        RoleResponse role = roleService.get(id)
             .orElseThrow(() -> new NotFoundException("role.not_found"));
         return ResponseEntity.ok(role);
     }
 
     @PostMapping
     @Operation(summary = "Create role")
-    public ResponseEntity<RoleEntity> create(@RequestBody RoleRequest request) {
+    public ResponseEntity<RoleResponse> create(@RequestBody RoleRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(roleService.create(request));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update role")
-    public ResponseEntity<RoleEntity> update(
+    public ResponseEntity<RoleResponse> update(
         @Parameter(description = "role id") @PathVariable Long id,
         @RequestBody RoleRequest request
     ) {
-        RoleEntity role = roleService.update(id, request)
+        RoleResponse role = roleService.update(id, request)
             .orElseThrow(() -> new NotFoundException("role.not_found"));
         return ResponseEntity.ok(role);
     }
