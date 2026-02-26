@@ -8,5 +8,8 @@ public record UserRoleResponse(
     String empNo,
     String empName,
     String orgName,
-    String roleName
+    String roleName,
+    String lastUpdatedBy,
+    String lastUpdatedByName,
+    String lastUpdatedDate
 ) {}

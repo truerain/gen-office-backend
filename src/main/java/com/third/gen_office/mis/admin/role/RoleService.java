@@ -2,12 +2,14 @@ package com.third.gen_office.mis.admin.role;
 
 import com.third.gen_office.domain.role.RoleEntity;
 import com.third.gen_office.domain.role.RoleRepository;
+import com.third.gen_office.mis.admin.role.dto.RoleOptionResponse;
 import com.third.gen_office.mis.admin.role.dto.RoleRequest;
 import com.third.gen_office.mis.admin.role.dto.RoleResponse;
 import com.third.gen_office.mis.common.util.LastUpdatedByResolver;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -25,6 +27,18 @@ public class RoleService {
         Map<String, String> updatedByNames = lastUpdatedByResolver.loadLastUpdatedByNames(entities);
         return entities.stream()
             .map(entity -> toResponse(entity, updatedByNames.get(entity.getLastUpdatedBy())))
+            .toList();
+    }
+
+    public List<RoleOptionResponse> listOptions(String useYn) {
+        List<RoleEntity> entities;
+        if (useYn == null || useYn.isBlank()) {
+            entities = roleRepository.findAll(Sort.by("sortOrder").ascending().and(Sort.by("roleId").ascending()));
+        } else {
+            entities = roleRepository.findByUseYnOrderBySortOrderAscRoleIdAsc(useYn);
+        }
+        return entities.stream()
+            .map(entity -> new RoleOptionResponse(entity.getRoleId(), entity.getRoleName()))
             .toList();
     }
 

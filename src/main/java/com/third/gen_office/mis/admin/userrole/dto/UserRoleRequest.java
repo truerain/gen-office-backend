@@ -7,15 +7,5 @@ public record UserRoleRequest(
     @Schema(description = "User id") Long userId,
     @Schema(description = "Role id") Long roleId,
     @Schema(description = "Primary Y/N") String primaryYn,
-    @Schema(description = "Use Y/N") String useYn,
-    String attribute1,
-    String attribute2,
-    String attribute3,
-    String attribute4,
-    String attribute5,
-    String attribute6,
-    String attribute7,
-    String attribute8,
-    String attribute9,
-    String attribute10
+    @Schema(description = "Use Y/N") String useYn
 ) {}

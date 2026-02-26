@@ -16,25 +16,33 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.third.gen_office.mis.common.util.LastUpdatedByResolver;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class UserRoleService {
     private final UserRoleRepository userRoleRepository;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final LastUpdatedByResolver lastUpdatedByResolver;
+    private static final DateTimeFormatter LAST_UPDATED_FORMAT =
+        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public UserRoleService(
         UserRoleRepository userRoleRepository,
         UserRepository userRepository,
-        RoleRepository roleRepository
+        RoleRepository roleRepository,
+        LastUpdatedByResolver lastUpdatedByResolver
     ) {
         this.userRoleRepository = userRoleRepository;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.lastUpdatedByResolver = lastUpdatedByResolver;
     }
 
     @Transactional(readOnly = true)
@@ -53,7 +61,12 @@ public class UserRoleService {
         validateKey(userId, roleId);
         UserRoleEntity entity = userRoleRepository.findById(new UserRoleId(userId, roleId))
             .orElseThrow(() -> new NotFoundException("user_role.not_found"));
-        return toResponse(entity, loadUser(entity.getUserId()), loadRole(entity.getRoleId()));
+
+        return toResponse(entity,
+                loadUser(entity.getUserId()),
+                loadRole(entity.getRoleId()),
+                lastUpdatedByResolver.resolveLastUpdatedByName(entity.getLastUpdatedBy())
+        );
     }
 
     @Transactional
@@ -102,7 +115,11 @@ public class UserRoleService {
         }
         userRoleRepository.save(entity);
 
-        return toResponse(entity, loadUser(entity.getUserId()), loadRole(entity.getRoleId()));
+        return toResponse(entity,
+                loadUser(entity.getUserId()),
+                loadRole(entity.getRoleId()),
+                lastUpdatedByResolver.resolveLastUpdatedByName(entity.getLastUpdatedBy())
+        );
     }
 
     @Transactional
@@ -154,10 +171,29 @@ public class UserRoleService {
     }
 
     private List<UserRoleResponse> toResponses(Long userId, Long roleId, String useYn, Sort sortSpec) {
-        return userRoleRepository.findDetailed(userId, roleId, useYn, sortSpec);
+
+       return userRoleRepository.findDetailed(userId, roleId, useYn, sortSpec).stream()
+           .map(this::toResponse)
+           .toList();
     }
 
-    private UserRoleResponse toResponse(UserRoleEntity entity, UserEntity user, RoleEntity role) {
+    private UserRoleResponse toResponse(com.third.gen_office.mis.admin.userrole.dto.UserRoleDetailRow row) {
+        return new UserRoleResponse(
+            row.getUserId(),
+            row.getRoleId(),
+            row.getPrimaryYn(),
+            row.getUseYn(),
+            row.getEmpNo(),
+            row.getEmpName(),
+            row.getOrgName(),
+            row.getRoleName(),
+            row.getLastUpdatedBy(),
+            row.getLastUpdatedByName(),
+            row.getLastUpdatedDate() == null ? null : row.getLastUpdatedDate().format(LAST_UPDATED_FORMAT)
+        );
+    }
+
+    private UserRoleResponse toResponse(UserRoleEntity entity, UserEntity user, RoleEntity role, String updatedByName) {
         return new UserRoleResponse(
             entity.getUserId(),
             entity.getRoleId(),
@@ -166,7 +202,10 @@ public class UserRoleService {
             user == null ? null : user.getEmpNo(),
             user == null ? null : user.getEmpName(),
             user == null ? null : user.getOrgName(),
-            role == null ? null : role.getRoleName()
+            role == null ? null : role.getRoleName(),
+            entity.getLastUpdatedBy(),
+            updatedByName,
+            entity.getLastUpdatedDate() == null ? null : entity.getLastUpdatedDate().format(LAST_UPDATED_FORMAT)
         );
     }
 

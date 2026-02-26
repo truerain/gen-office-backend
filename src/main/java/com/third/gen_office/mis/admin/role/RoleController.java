@@ -1,6 +1,7 @@
 package com.third.gen_office.mis.admin.role;
 
 import com.third.gen_office.global.error.NotFoundException;
+import com.third.gen_office.mis.admin.role.dto.RoleOptionResponse;
 import com.third.gen_office.mis.admin.role.dto.RoleRequest;
 import com.third.gen_office.mis.admin.role.dto.RoleResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Role", description = "Role management API")
@@ -32,6 +34,14 @@ public class RoleController {
     @Operation(summary = "List roles")
     public List<RoleResponse> list() {
         return roleService.list();
+    }
+
+    @GetMapping("/options")
+    @Operation(summary = "List role options for select")
+    public List<RoleOptionResponse> listOptions(
+        @RequestParam(value = "useYn", required = false, defaultValue = "Y") String useYn
+    ) {
+        return roleService.listOptions(useYn);
     }
 
     @GetMapping("/{id}")
