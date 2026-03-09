@@ -1,13 +1,14 @@
 package com.third.gen_office.mis.admin.menu;
 
+import com.third.gen_office.global.api.ApiResponse;
 import com.third.gen_office.global.error.NotFoundException;
+import com.third.gen_office.mis.admin.menu.dto.MenuBulkRequest;
 import com.third.gen_office.mis.admin.menu.dto.MenuRequest;
 import com.third.gen_office.mis.admin.menu.dto.MenuResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,27 +51,35 @@ public class MenuController {
 
     @PostMapping
     @Operation(summary = "메뉴 생성")
-    public ResponseEntity<MenuResponse> create(@RequestBody MenuRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(menuService.create(request));
+    public ResponseEntity<ApiResponse> create(@RequestBody MenuRequest request) {
+        menuService.create(request);
+        return ResponseEntity.ok(ApiResponse.ok());
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "메뉴 수정")
-    public ResponseEntity<MenuResponse> update(
+    public ResponseEntity<ApiResponse> update(
         @Parameter(description = "메뉴 ID") @PathVariable Long id,
         @RequestBody MenuRequest request
     ) {
-        MenuResponse menu = menuService.update(id, request)
+        menuService.update(id, request)
             .orElseThrow(() -> new NotFoundException("menu.not_found"));
-        return ResponseEntity.ok(menu);
+        return ResponseEntity.ok(ApiResponse.ok());
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "메뉴 삭제")
-    public ResponseEntity<Void> delete(@Parameter(description = "메뉴 ID") @PathVariable Long id) {
+    public ResponseEntity<ApiResponse> delete(@Parameter(description = "메뉴 ID") @PathVariable Long id) {
         if (!menuService.delete(id)) {
             throw new NotFoundException("menu.not_found");
         }
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.ok());
+    }
+
+    @PostMapping("/bulk")
+    @Operation(summary = "메뉴 일괄 저장")
+    public ResponseEntity<ApiResponse> bulkCommit(@RequestBody MenuBulkRequest request) {
+        menuService.bulkCommit(request);
+        return ResponseEntity.ok(ApiResponse.ok());
     }
 }

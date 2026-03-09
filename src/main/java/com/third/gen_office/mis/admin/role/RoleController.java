@@ -1,5 +1,6 @@
 package com.third.gen_office.mis.admin.role;
 
+import com.third.gen_office.global.api.ApiResponse;
 import com.third.gen_office.global.error.NotFoundException;
 import com.third.gen_office.mis.admin.role.dto.RoleOptionResponse;
 import com.third.gen_office.mis.admin.role.dto.RoleRequest;
@@ -8,7 +9,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,27 +54,29 @@ public class RoleController {
 
     @PostMapping
     @Operation(summary = "Create role")
-    public ResponseEntity<RoleResponse> create(@RequestBody RoleRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(roleService.create(request));
+    public ResponseEntity<ApiResponse> create(@RequestBody RoleRequest request) {
+        roleService.create(request);
+        return ResponseEntity.ok(ApiResponse.ok());
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update role")
-    public ResponseEntity<RoleResponse> update(
+    public ResponseEntity<ApiResponse> update(
         @Parameter(description = "role id") @PathVariable Long id,
         @RequestBody RoleRequest request
     ) {
-        RoleResponse role = roleService.update(id, request)
+        roleService.update(id, request)
             .orElseThrow(() -> new NotFoundException("role.not_found"));
-        return ResponseEntity.ok(role);
+        return ResponseEntity.ok(ApiResponse.ok());
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete role")
-    public ResponseEntity<Void> delete(@Parameter(description = "role id") @PathVariable Long id) {
+    public ResponseEntity<ApiResponse> delete(@Parameter(description = "role id") @PathVariable Long id) {
         if (!roleService.delete(id)) {
             throw new NotFoundException("role.not_found");
         }
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.ok());
     }
 }
+

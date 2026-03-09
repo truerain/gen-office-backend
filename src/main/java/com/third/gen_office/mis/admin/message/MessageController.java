@@ -1,7 +1,7 @@
 package com.third.gen_office.mis.admin.message;
 
+import com.third.gen_office.global.api.ApiResponse;
 import com.third.gen_office.mis.admin.message.dto.BulkMessageRequest;
-import com.third.gen_office.mis.admin.message.dto.BulkMessageResponse;
 import com.third.gen_office.mis.admin.message.dto.MessageCreateRequest;
 import com.third.gen_office.mis.admin.message.dto.MessageListResponse;
 import com.third.gen_office.mis.admin.message.dto.MessageResponse;
@@ -10,7 +10,6 @@ import com.third.gen_office.mis.admin.message.dto.MissingMessageResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -58,37 +57,39 @@ public class MessageController {
 
     @PostMapping
     @Operation(summary = "Create message")
-    public ResponseEntity<MessageResponse> create(@RequestBody MessageCreateRequest request) {
-        MessageResponse response = messageService.create(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    public ResponseEntity<ApiResponse> create(@RequestBody MessageCreateRequest request) {
+        messageService.create(request);
+        return ResponseEntity.ok(ApiResponse.ok());
     }
 
     @PutMapping("/{namespace}/{messageCd}/{langCd}")
     @Operation(summary = "Update message")
-    public MessageResponse update(
+    public ResponseEntity<ApiResponse> update(
         @Parameter(description = "namespace") @PathVariable String namespace,
         @Parameter(description = "message code") @PathVariable String messageCd,
         @Parameter(description = "language code") @PathVariable String langCd,
         @RequestBody MessageUpdateRequest request
     ) {
-        return messageService.update(namespace, messageCd, langCd, request);
+        messageService.update(namespace, messageCd, langCd, request);
+        return ResponseEntity.ok(ApiResponse.ok());
     }
 
     @DeleteMapping("/{namespace}/{messageCd}/{langCd}")
     @Operation(summary = "Delete message")
-    public ResponseEntity<Void> delete(
+    public ResponseEntity<ApiResponse> delete(
         @Parameter(description = "namespace") @PathVariable String namespace,
         @Parameter(description = "message code") @PathVariable String messageCd,
         @Parameter(description = "language code") @PathVariable String langCd
     ) {
         messageService.delete(namespace, messageCd, langCd);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.ok());
     }
 
     @PostMapping("/bulk")
     @Operation(summary = "Bulk upsert messages")
-    public BulkMessageResponse bulkUpsert(@RequestBody BulkMessageRequest request) {
-        return messageService.bulkUpsert(request);
+    public ResponseEntity<ApiResponse> bulkUpsert(@RequestBody BulkMessageRequest request) {
+        messageService.bulkUpsert(request);
+        return ResponseEntity.ok(ApiResponse.ok());
     }
 
     @GetMapping("/missing")
@@ -101,3 +102,4 @@ public class MessageController {
         return messageService.missing(namespace, baseLang, targetLang);
     }
 }
+

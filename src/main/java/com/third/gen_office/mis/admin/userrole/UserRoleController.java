@@ -1,11 +1,11 @@
 package com.third.gen_office.mis.admin.userrole;
 
+import com.third.gen_office.global.api.ApiResponse;
 import com.third.gen_office.mis.admin.userrole.dto.UserRoleRequest;
 import com.third.gen_office.mis.admin.userrole.dto.UserRoleResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,29 +49,31 @@ public class UserRoleController {
 
     @PostMapping("/user-roles")
     @Operation(summary = "Create user role mapping")
-    public ResponseEntity<UserRoleResponse> create(@RequestBody UserRoleRequest request) {
-        UserRoleResponse response = userRoleService.create(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    public ResponseEntity<ApiResponse> create(@RequestBody UserRoleRequest request) {
+        userRoleService.create(request);
+        return ResponseEntity.ok(ApiResponse.ok());
     }
 
     @PutMapping("/user-roles/{userId}/{roleId}")
     @Operation(summary = "Update user role mapping")
-    public UserRoleResponse update(
+    public ResponseEntity<ApiResponse> update(
         @Parameter(description = "user id") @PathVariable Long userId,
         @Parameter(description = "role id") @PathVariable Long roleId,
         @RequestBody UserRoleRequest request
     ) {
-        return userRoleService.update(userId, roleId, request);
+        userRoleService.update(userId, roleId, request);
+        return ResponseEntity.ok(ApiResponse.ok());
     }
 
     @DeleteMapping("/user-roles/{userId}/{roleId}")
     @Operation(summary = "Delete user role mapping (soft)")
-    public ResponseEntity<Void> delete(
+    public ResponseEntity<ApiResponse> delete(
         @Parameter(description = "user id") @PathVariable Long userId,
         @Parameter(description = "role id") @PathVariable Long roleId
     ) {
         userRoleService.delete(userId, roleId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.ok());
     }
 
 }
+

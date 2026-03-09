@@ -1,5 +1,7 @@
 package com.third.gen_office.mis.admin.rolemenu;
 
+import com.third.gen_office.global.api.ApiResponse;
+import com.third.gen_office.global.error.BadRequestException;
 import com.third.gen_office.mis.admin.rolemenu.dto.RoleMenuRequest;
 import com.third.gen_office.mis.admin.rolemenu.dto.RoleMenuResponse;
 import com.third.gen_office.mis.admin.rolemenu.dto.RoleMenuView;
@@ -8,7 +10,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -59,21 +60,24 @@ public class RoleMenuController {
 
     @PostMapping
     @Operation(summary = "Create role menu mapping")
-    public ResponseEntity<RoleMenuResponse> create(@RequestBody RoleMenuRequest request) {
-        return roleMenuService.create(request)
-            .map(roleMenu -> ResponseEntity.status(HttpStatus.CREATED).body(roleMenu))
-            .orElseGet(() -> ResponseEntity.status(HttpStatus.BAD_REQUEST).build());
+    public ResponseEntity<ApiResponse> create(@RequestBody RoleMenuRequest request) {
+        boolean created = roleMenuService.create(request).isPresent();
+        if (!created) {
+            throw new BadRequestException("role_menu.invalid_request");
+        }
+        return ResponseEntity.ok(ApiResponse.ok());
     }
 
     @DeleteMapping("/{roleId}/{menuId}")
     @Operation(summary = "Delete role menu mapping")
-    public ResponseEntity<Void> delete(
+    public ResponseEntity<ApiResponse> delete(
         @Parameter(description = "role id") @PathVariable Long roleId,
         @Parameter(description = "menu id") @PathVariable Long menuId
     ) {
         if (!roleMenuService.delete(roleId, menuId)) {
             throw new NotFoundException("role_menu.not_found");
         }
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.ok());
     }
 }
+

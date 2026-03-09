@@ -51,6 +51,10 @@ out/
 ### VS Code ###
 .vscode/
 
+# Local sqlite dbs
+data/backoffice.db
+data/backoffice.db*
+
  virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*

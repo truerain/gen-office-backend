@@ -1,11 +1,10 @@
 package com.third.gen_office.global.error;
 
+import com.third.gen_office.global.api.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
-import java.time.OffsetDateTime;
 import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
@@ -25,56 +24,26 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ApiException.class)
-    public ResponseEntity<ApiErrorResponse> handleApiException(
+    public ResponseEntity<ApiResponse> handleApiException(
         ApiException ex,
         HttpServletRequest request
     ) {
         Locale locale = LocaleContextHolder.getLocale();
         String message = messageSource.getMessage(ex.getMessageKey(), null, ex.getMessageKey(), locale);
-        ApiErrorResponse response = buildResponse(
-            ex.getCode(),
-            ex.getMessageKey(),
-            message,
-            locale,
-            request
-        );
+        ApiResponse response = ApiResponse.failure(ex.getCode(), message);
         return ResponseEntity.status(ex.getStatus()).body(response);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiErrorResponse> handleUnexpectedException(
+    public ResponseEntity<ApiResponse> handleUnexpectedException(
         Exception ex,
         HttpServletRequest request
     ) {
         log.error("Unhandled exception for {} {}", request.getMethod(), request.getRequestURI(), ex);
         Locale locale = LocaleContextHolder.getLocale();
         String message = messageSource.getMessage(DEFAULT_MESSAGE_KEY, null, DEFAULT_MESSAGE_KEY, locale);
-        ApiErrorResponse response = buildResponse(
-            HttpStatus.INTERNAL_SERVER_ERROR.name(),
-            DEFAULT_MESSAGE_KEY,
-            message,
-            locale,
-            request
-        );
+        ApiResponse response = ApiResponse.failure(HttpStatus.INTERNAL_SERVER_ERROR.name(), message);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
-
-    private ApiErrorResponse buildResponse(
-        String code,
-        String messageKey,
-        String message,
-        Locale locale,
-        HttpServletRequest request
-    ) {
-        String traceId = MDC.get("traceId");
-        return new ApiErrorResponse(
-            code,
-            messageKey,
-            message,
-            locale == null ? null : locale.toLanguageTag(),
-            request.getRequestURI(),
-            OffsetDateTime.now().toString(),
-            traceId
-        );
-    }
 }
+

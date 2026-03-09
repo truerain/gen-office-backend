@@ -6,10 +6,10 @@ import com.third.gen_office.mis.admin.lookup.dto.LookupMasterUpdateRequest;
 import com.third.gen_office.mis.admin.lookup.dto.LookupDetailCreateRequest;
 import com.third.gen_office.mis.admin.lookup.dto.LookupDetailResponse;
 import com.third.gen_office.mis.admin.lookup.dto.LookupDetailUpdateRequest;
+import com.third.gen_office.global.api.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -58,9 +58,9 @@ public class LookupController {
         "application/json;charset=UTF-8"
     })
     @Operation(summary = "Create lookup master")
-    public ResponseEntity<LookupMasterResponse> createNaster(@RequestBody LookupMasterCreateRequest request) {
-        LookupMasterResponse response = lookupService.createMaster(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    public ResponseEntity<ApiResponse> createNaster(@RequestBody LookupMasterCreateRequest request) {
+        lookupService.createMaster(request);
+        return ResponseEntity.ok(ApiResponse.ok());
     }
 
     @PutMapping(value = "/masters/{lkupClssCd}", consumes = {
@@ -68,11 +68,12 @@ public class LookupController {
         "application/json;charset=UTF-8"
     })
     @Operation(summary = "Update lookup master")
-    public LookupMasterResponse updateLkupMaster(
+    public ResponseEntity<ApiResponse> updateLkupMaster(
         @Parameter(description = "lookup class code") @PathVariable String lkupClssCd,
         @RequestBody LookupMasterUpdateRequest request
     ) {
-        return lookupService.updateMaster(lkupClssCd, request);
+        lookupService.updateMaster(lkupClssCd, request);
+        return ResponseEntity.ok(ApiResponse.ok());
     }
 
     @GetMapping("/{lkupClssCd}/details")
@@ -99,21 +100,23 @@ public class LookupController {
 
     @PostMapping("/{lkupClssCd}/details")
     @Operation(summary = "Create lookup detail")
-    public ResponseEntity<LookupDetailResponse> createDetail(
+    public ResponseEntity<ApiResponse> createDetail(
         @Parameter(description = "lookup class code") @PathVariable String lkupClssCd,
         @RequestBody LookupDetailCreateRequest request
     ) {
-        LookupDetailResponse response = lookupService.createDetail(lkupClssCd, request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        lookupService.createDetail(lkupClssCd, request);
+        return ResponseEntity.ok(ApiResponse.ok());
     }
 
     @PutMapping("/{lkupClssCd}/details/{lkupCd}")
     @Operation(summary = "Update lookup detail")
-    public LookupDetailResponse updateDetail(
+    public ResponseEntity<ApiResponse> updateDetail(
         @Parameter(description = "lookup class code") @PathVariable String lkupClssCd,
         @Parameter(description = "lookup code") @PathVariable String lkupCd,
         @RequestBody LookupDetailUpdateRequest request
     ) {
-        return lookupService.updateDetail(lkupClssCd, lkupCd, request);
+        lookupService.updateDetail(lkupClssCd, lkupCd, request);
+        return ResponseEntity.ok(ApiResponse.ok());
     }
 }
+

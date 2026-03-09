@@ -2,6 +2,8 @@ package com.third.gen_office.mis.admin.menu;
 
 import com.third.gen_office.domain.menu.MenuEntity;
 import com.third.gen_office.domain.menu.MenuRepository;
+import com.third.gen_office.global.error.BadRequestException;
+import com.third.gen_office.mis.admin.menu.dto.MenuBulkRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -10,6 +12,7 @@ import com.third.gen_office.mis.admin.menu.dto.MenuRequest;
 import com.third.gen_office.mis.admin.menu.dto.MenuResponse;
 import com.third.gen_office.mis.common.util.LastUpdatedByResolver;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MenuService {
@@ -72,6 +75,40 @@ public class MenuService {
         }
         menuRepository.deleteById(id);
         return true;
+    }
+
+    @Transactional
+    public void bulkCommit(MenuBulkRequest request) {
+        if (request == null) {
+            throw new BadRequestException("menu.bulk_invalid_request");
+        }
+
+        List<MenuRequest> creates = request.creates() == null ? List.of() : request.creates();
+        for (MenuRequest item : creates) {
+            if (item == null) {
+                throw new BadRequestException("menu.create_invalid_request");
+            }
+            create(item);
+        }
+
+        List<MenuRequest> updates = request.updates() == null ? List.of() : request.updates();
+        for (MenuRequest item : updates) {
+            if (item == null || item.menuId() == null) {
+                throw new BadRequestException("menu.update_invalid_request");
+            }
+            update(item.menuId(), item)
+                .orElseThrow(() -> new BadRequestException("menu.update_invalid_request"));
+        }
+
+        List<Long> deletes = request.deletes() == null ? List.of() : request.deletes();
+        for (Long id : deletes) {
+            if (id == null) {
+                throw new BadRequestException("menu.delete_invalid_request");
+            }
+            if (!delete(id)) {
+                throw new BadRequestException("menu.delete_invalid_request");
+            }
+        }
     }
 
     private void applyRequest(MenuEntity menu, MenuRequest request) {
