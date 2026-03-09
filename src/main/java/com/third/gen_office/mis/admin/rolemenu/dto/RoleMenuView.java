@@ -1,5 +1,7 @@
 package com.third.gen_office.mis.admin.rolemenu.dto;
 
+import java.time.LocalDateTime;
+
 public record RoleMenuView(
     Long menuId,
     String menuName,
@@ -12,5 +14,8 @@ public record RoleMenuView(
     Long parentMenuId,
     String displayYn,
     Integer sortOrder,
-    String useYn
+    String useYn,
+    String lastUpdatedBy,
+    String lastUpdatedByName,
+    LocalDateTime lastUpdatedDate
 ) {}

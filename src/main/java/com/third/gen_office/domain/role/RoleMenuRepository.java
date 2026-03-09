@@ -27,7 +27,10 @@ public interface RoleMenuRepository extends JpaRepository<RoleMenuEntity, RoleMe
             m.parentMenuId,
             m.displayYn,
             m.sortOrder,
-            coalesce(rm.useYn, 'N')
+            coalesce(rm.useYn, 'N'),
+            rm.lastUpdatedBy,
+            null,
+            rm.lastUpdatedDate
         )
         from MenuEntity m
         left join RoleMenuEntity rm

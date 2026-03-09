@@ -6,5 +6,5 @@ public record RoleMenuResponse(
     String useYn,
     String lastUpdatedBy,
     String lastUpdatedByName,
-    String lastUpdatedAt
+    String lastUpdatedDate
 ) {}

@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Role request DTO")
 public record RoleRequest(
+    @Schema(description = "Role id") Long roleId,
     @Schema(description = "Role code") String roleCd,
     @Schema(description = "Role name") String roleName,
     @Schema(description = "Role name (English)") String roleNameEng,

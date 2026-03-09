@@ -3,6 +3,9 @@ package com.third.gen_office.mis.admin.rolemenu;
 import com.third.gen_office.domain.role.RoleMenuEntity;
 import com.third.gen_office.domain.role.RoleMenuId;
 import com.third.gen_office.domain.role.RoleMenuRepository;
+import com.third.gen_office.global.error.BadRequestException;
+import com.third.gen_office.mis.admin.rolemenu.dto.RoleMenuBulkRequest;
+import com.third.gen_office.mis.admin.rolemenu.dto.RoleMenuIdRequest;
 import com.third.gen_office.mis.admin.rolemenu.dto.RoleMenuRequest;
 import com.third.gen_office.mis.admin.rolemenu.dto.RoleMenuResponse;
 import com.third.gen_office.mis.admin.rolemenu.dto.RoleMenuView;
@@ -11,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class RoleMenuService {
@@ -43,7 +47,28 @@ public class RoleMenuService {
     }
 
     public List<RoleMenuView> listByRole(Long roleId) {
-        return roleMenuRepository.findRoleMenuViewByRoleId(roleId);
+        List<RoleMenuView> views = roleMenuRepository.findRoleMenuViewByRoleId(roleId);
+        Map<String, String> updatedByNames = lastUpdatedByResolver
+            .loadLastUpdatedByNames(roleMenuRepository.findByRoleId(roleId));
+        return views.stream()
+            .map(view -> new RoleMenuView(
+                view.menuId(),
+                view.menuName(),
+                view.menuNameEng(),
+                view.menuDesc(),
+                view.menuDescEng(),
+                view.menuLevel(),
+                view.execComponent(),
+                view.menuIcon(),
+                view.parentMenuId(),
+                view.displayYn(),
+                view.sortOrder(),
+                view.useYn(),
+                view.lastUpdatedBy(),
+                updatedByNames.get(view.lastUpdatedBy()),
+                view.lastUpdatedDate()
+            ))
+            .toList();
     }
 
     public Optional<RoleMenuResponse> create(RoleMenuRequest request) {
@@ -67,6 +92,43 @@ public class RoleMenuService {
         }
         roleMenuRepository.deleteByRoleIdAndMenuId(roleId, menuId);
         return true;
+    }
+
+    @Transactional
+    public void bulkCommit(RoleMenuBulkRequest request) {
+        if (request == null) {
+            throw new BadRequestException("role_menu.bulk_invalid_request");
+        }
+
+        List<RoleMenuRequest> creates = request.creates() == null ? List.of() : request.creates();
+        for (RoleMenuRequest item : creates) {
+            if (item == null) {
+                throw new BadRequestException("role_menu.create_invalid_request");
+            }
+            if (create(item).isEmpty()) {
+                throw new BadRequestException("role_menu.create_invalid_request");
+            }
+        }
+
+        List<RoleMenuRequest> updates = request.updates() == null ? List.of() : request.updates();
+        for (RoleMenuRequest item : updates) {
+            if (item == null || item.roleId() == null || item.menuId() == null) {
+                throw new BadRequestException("role_menu.update_invalid_request");
+            }
+            if (create(item).isEmpty()) {
+                throw new BadRequestException("role_menu.update_invalid_request");
+            }
+        }
+
+        List<RoleMenuIdRequest> deletes = request.deletes() == null ? List.of() : request.deletes();
+        for (RoleMenuIdRequest item : deletes) {
+            if (item == null || item.roleId() == null || item.menuId() == null) {
+                throw new BadRequestException("role_menu.delete_invalid_request");
+            }
+            if (!delete(item.roleId(), item.menuId())) {
+                throw new BadRequestException("role_menu.delete_invalid_request");
+            }
+        }
     }
 
     private RoleMenuResponse toResponse(RoleMenuEntity entity, String updatedByName) {

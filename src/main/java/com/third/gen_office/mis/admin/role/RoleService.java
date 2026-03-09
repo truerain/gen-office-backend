@@ -2,6 +2,8 @@ package com.third.gen_office.mis.admin.role;
 
 import com.third.gen_office.domain.role.RoleEntity;
 import com.third.gen_office.domain.role.RoleRepository;
+import com.third.gen_office.global.error.BadRequestException;
+import com.third.gen_office.mis.admin.role.dto.RoleBulkRequest;
 import com.third.gen_office.mis.admin.role.dto.RoleOptionResponse;
 import com.third.gen_office.mis.admin.role.dto.RoleRequest;
 import com.third.gen_office.mis.admin.role.dto.RoleResponse;
@@ -11,6 +13,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class RoleService {
@@ -71,6 +74,40 @@ public class RoleService {
         }
         roleRepository.deleteById(id);
         return true;
+    }
+
+    @Transactional
+    public void bulkCommit(RoleBulkRequest request) {
+        if (request == null) {
+            throw new BadRequestException("role.bulk_invalid_request");
+        }
+
+        List<RoleRequest> creates = request.creates() == null ? List.of() : request.creates();
+        for (RoleRequest item : creates) {
+            if (item == null) {
+                throw new BadRequestException("role.create_invalid_request");
+            }
+            create(item);
+        }
+
+        List<RoleRequest> updates = request.updates() == null ? List.of() : request.updates();
+        for (RoleRequest item : updates) {
+            if (item == null || item.roleId() == null) {
+                throw new BadRequestException("role.update_invalid_request");
+            }
+            update(item.roleId(), item)
+                .orElseThrow(() -> new BadRequestException("role.update_invalid_request"));
+        }
+
+        List<Long> deletes = request.deletes() == null ? List.of() : request.deletes();
+        for (Long id : deletes) {
+            if (id == null) {
+                throw new BadRequestException("role.delete_invalid_request");
+            }
+            if (!delete(id)) {
+                throw new BadRequestException("role.delete_invalid_request");
+            }
+        }
     }
 
     private void applyRequest(RoleEntity role, RoleRequest request) {

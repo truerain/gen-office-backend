@@ -2,6 +2,7 @@ package com.third.gen_office.mis.admin.rolemenu;
 
 import com.third.gen_office.global.api.ApiResponse;
 import com.third.gen_office.global.error.BadRequestException;
+import com.third.gen_office.mis.admin.rolemenu.dto.RoleMenuBulkRequest;
 import com.third.gen_office.mis.admin.rolemenu.dto.RoleMenuRequest;
 import com.third.gen_office.mis.admin.rolemenu.dto.RoleMenuResponse;
 import com.third.gen_office.mis.admin.rolemenu.dto.RoleMenuView;
@@ -77,6 +78,13 @@ public class RoleMenuController {
         if (!roleMenuService.delete(roleId, menuId)) {
             throw new NotFoundException("role_menu.not_found");
         }
+        return ResponseEntity.ok(ApiResponse.ok());
+    }
+
+    @PostMapping("/bulk")
+    @Operation(summary = "Bulk commit role menu mappings")
+    public ResponseEntity<ApiResponse> bulkCommit(@RequestBody RoleMenuBulkRequest request) {
+        roleMenuService.bulkCommit(request);
         return ResponseEntity.ok(ApiResponse.ok());
     }
 }

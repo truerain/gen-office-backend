@@ -2,6 +2,7 @@ package com.third.gen_office.mis.admin.role;
 
 import com.third.gen_office.global.api.ApiResponse;
 import com.third.gen_office.global.error.NotFoundException;
+import com.third.gen_office.mis.admin.role.dto.RoleBulkRequest;
 import com.third.gen_office.mis.admin.role.dto.RoleOptionResponse;
 import com.third.gen_office.mis.admin.role.dto.RoleRequest;
 import com.third.gen_office.mis.admin.role.dto.RoleResponse;
@@ -76,6 +77,13 @@ public class RoleController {
         if (!roleService.delete(id)) {
             throw new NotFoundException("role.not_found");
         }
+        return ResponseEntity.ok(ApiResponse.ok());
+    }
+
+    @PostMapping("/bulk")
+    @Operation(summary = "Bulk commit roles")
+    public ResponseEntity<ApiResponse> bulkCommit(@RequestBody RoleBulkRequest request) {
+        roleService.bulkCommit(request);
         return ResponseEntity.ok(ApiResponse.ok());
     }
 }
