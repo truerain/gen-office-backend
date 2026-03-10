@@ -1,11 +1,11 @@
 package com.third.gen_office.mis.admin.lookup;
 
-import com.third.gen_office.mis.admin.lookup.dto.LookupMasterCreateRequest;
-import com.third.gen_office.mis.admin.lookup.dto.LookupMasterResponse;
-import com.third.gen_office.mis.admin.lookup.dto.LookupMasterUpdateRequest;
-import com.third.gen_office.mis.admin.lookup.dto.LookupDetailCreateRequest;
+import com.third.gen_office.mis.admin.lookup.dto.BulkLookupDetailRequest;
+import com.third.gen_office.mis.admin.lookup.dto.BulkLookupMasterRequest;
+import com.third.gen_office.mis.admin.lookup.dto.LookupDetailRequest;
 import com.third.gen_office.mis.admin.lookup.dto.LookupDetailResponse;
-import com.third.gen_office.mis.admin.lookup.dto.LookupDetailUpdateRequest;
+import com.third.gen_office.mis.admin.lookup.dto.LookupMasterRequest;
+import com.third.gen_office.mis.admin.lookup.dto.LookupMasterResponse;
 import com.third.gen_office.global.api.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -58,8 +58,15 @@ public class LookupController {
         "application/json;charset=UTF-8"
     })
     @Operation(summary = "Create lookup master")
-    public ResponseEntity<ApiResponse> createNaster(@RequestBody LookupMasterCreateRequest request) {
+    public ResponseEntity<ApiResponse> createNaster(@RequestBody LookupMasterRequest request) {
         lookupService.createMaster(request);
+        return ResponseEntity.ok(ApiResponse.ok());
+    }
+
+    @PostMapping("/masters/bulk")
+    @Operation(summary = "Bulk commit lookup masters")
+    public ResponseEntity<ApiResponse> bulkCommitMasters(@RequestBody BulkLookupMasterRequest request) {
+        lookupService.bulkCommitMasters(request);
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
@@ -70,7 +77,7 @@ public class LookupController {
     @Operation(summary = "Update lookup master")
     public ResponseEntity<ApiResponse> updateLkupMaster(
         @Parameter(description = "lookup class code") @PathVariable String lkupClssCd,
-        @RequestBody LookupMasterUpdateRequest request
+        @RequestBody LookupMasterRequest request
     ) {
         lookupService.updateMaster(lkupClssCd, request);
         return ResponseEntity.ok(ApiResponse.ok());
@@ -102,9 +109,16 @@ public class LookupController {
     @Operation(summary = "Create lookup detail")
     public ResponseEntity<ApiResponse> createDetail(
         @Parameter(description = "lookup class code") @PathVariable String lkupClssCd,
-        @RequestBody LookupDetailCreateRequest request
+        @RequestBody LookupDetailRequest request
     ) {
         lookupService.createDetail(lkupClssCd, request);
+        return ResponseEntity.ok(ApiResponse.ok());
+    }
+
+    @PostMapping("/details/bulk")
+    @Operation(summary = "Bulk commit lookup details")
+    public ResponseEntity<ApiResponse> bulkCommitDetails(@RequestBody BulkLookupDetailRequest request) {
+        lookupService.bulkCommitDetails(request);
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
@@ -113,10 +127,9 @@ public class LookupController {
     public ResponseEntity<ApiResponse> updateDetail(
         @Parameter(description = "lookup class code") @PathVariable String lkupClssCd,
         @Parameter(description = "lookup code") @PathVariable String lkupCd,
-        @RequestBody LookupDetailUpdateRequest request
+        @RequestBody LookupDetailRequest request
     ) {
         lookupService.updateDetail(lkupClssCd, lkupCd, request);
         return ResponseEntity.ok(ApiResponse.ok());
     }
 }
-

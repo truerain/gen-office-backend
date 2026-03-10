@@ -2,6 +2,8 @@ package com.third.gen_office.mis.admin.user;
 
 import com.third.gen_office.domain.user.UserEntity;
 import com.third.gen_office.domain.user.UserRepository;
+import com.third.gen_office.global.error.BadRequestException;
+import com.third.gen_office.mis.admin.user.dto.BulkUserRequest;
 import com.third.gen_office.mis.admin.user.dto.UserRequest;
 import com.third.gen_office.mis.admin.user.dto.UserResponse;
 import com.third.gen_office.mis.common.util.LastUpdatedByResolver;
@@ -57,6 +59,9 @@ public class UserService {
     }
 
     public Optional<UserResponse> update(Long id, UserRequest request) {
+        if (request.userId() != null && !id.equals(request.userId())) {
+            throw new BadRequestException("user.invalid_request");
+        }
         return userRepository.findById(id)
             .map(user -> {
                 applyRequest(user, request);
@@ -72,6 +77,39 @@ public class UserService {
         }
         userRepository.deleteById(id);
         return true;
+    }
+
+    public void bulkCommit(BulkUserRequest request) {
+        if (request == null) {
+            throw new BadRequestException("user.invalid_request");
+        }
+
+        List<UserRequest> creates = request.creates() == null ? List.of() : request.creates();
+        for (UserRequest item : creates) {
+            if (item == null) {
+                throw new BadRequestException("user.invalid_request");
+            }
+            create(item);
+        }
+
+        List<UserRequest> updates = request.updates() == null ? List.of() : request.updates();
+        for (UserRequest item : updates) {
+            if (item == null || item.userId() == null) {
+                throw new BadRequestException("user.invalid_request");
+            }
+            update(item.userId(), item)
+                .orElseThrow(() -> new BadRequestException("user.invalid_request"));
+        }
+
+        List<UserRequest> deletes = request.deletes() == null ? List.of() : request.deletes();
+        for (UserRequest item : deletes) {
+            if (item == null || item.userId() == null) {
+                throw new BadRequestException("user.invalid_request");
+            }
+            if (!delete(item.userId())) {
+                throw new BadRequestException("user.invalid_request");
+            }
+        }
     }
 
     private void applyRequest(UserEntity userEntity, UserRequest request) {

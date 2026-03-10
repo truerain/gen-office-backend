@@ -1,6 +1,8 @@
 package com.third.gen_office.mis.admin.notice;
 
 import com.third.gen_office.domain.notice.NoticeEntity;
+import com.third.gen_office.global.error.BadRequestException;
+import com.third.gen_office.mis.admin.notice.dto.BulkNoticeRequest;
 import com.third.gen_office.mis.admin.notice.dto.NoticeResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -110,6 +112,44 @@ public class NoticeService {
             throw new IllegalArgumentException("공지사항이 없습니다.");
         }
         noticeRepository.deleteById(id);
+    }
+    @Transactional
+    public void bulkCommit(BulkNoticeRequest request) {
+        if (request == null) {
+            throw new BadRequestException("notice.invalid_request");
+        }
+
+        List<NoticeRequest> creates = request.creates() == null ? List.of() : request.creates();
+        for (NoticeRequest item : creates) {
+            if (item == null) {
+                throw new BadRequestException("notice.invalid_request");
+            }
+            createNotice(item);
+        }
+
+        List<NoticeRequest> updates = request.updates() == null ? List.of() : request.updates();
+        for (NoticeRequest item : updates) {
+            if (item == null) {
+                throw new BadRequestException("notice.invalid_request");
+            }
+            Integer noticeId = resolveNoticeId(item);
+            if (noticeId == null || noticeId <= 0) {
+                throw new BadRequestException("notice.invalid_request");
+            }
+            updateNotice(noticeId, item);
+        }
+
+        List<NoticeRequest> deletes = request.deletes() == null ? List.of() : request.deletes();
+        for (NoticeRequest item : deletes) {
+            if (item == null) {
+                throw new BadRequestException("notice.invalid_request");
+            }
+            Integer noticeId = resolveNoticeId(item);
+            if (noticeId == null || noticeId <= 0) {
+                throw new BadRequestException("notice.invalid_request");
+            }
+            deleteNotice(noticeId);
+        }
     }
 }
 

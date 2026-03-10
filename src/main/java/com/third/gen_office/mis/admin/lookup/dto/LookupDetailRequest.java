@@ -1,9 +1,11 @@
 package com.third.gen_office.mis.admin.lookup.dto;
 
-public record LookupMasterCreateRequest(
+public record LookupDetailRequest(
     String lkupClssCd,
-    String lkupClssName,
-    String lkupClssDesc,
+    String lkupCd,
+    String lkupName,
+    String lkupNameEng,
+    Integer sortOrder,
     String useYn,
     String attribute1,
     String attribute2,

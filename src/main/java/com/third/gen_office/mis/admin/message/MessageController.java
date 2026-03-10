@@ -2,10 +2,9 @@ package com.third.gen_office.mis.admin.message;
 
 import com.third.gen_office.global.api.ApiResponse;
 import com.third.gen_office.mis.admin.message.dto.BulkMessageRequest;
-import com.third.gen_office.mis.admin.message.dto.MessageCreateRequest;
 import com.third.gen_office.mis.admin.message.dto.MessageListResponse;
+import com.third.gen_office.mis.admin.message.dto.MessageRequest;
 import com.third.gen_office.mis.admin.message.dto.MessageResponse;
-import com.third.gen_office.mis.admin.message.dto.MessageUpdateRequest;
 import com.third.gen_office.mis.admin.message.dto.MissingMessageResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -57,7 +56,7 @@ public class MessageController {
 
     @PostMapping
     @Operation(summary = "Create message")
-    public ResponseEntity<ApiResponse> create(@RequestBody MessageCreateRequest request) {
+    public ResponseEntity<ApiResponse> create(@RequestBody MessageRequest request) {
         messageService.create(request);
         return ResponseEntity.ok(ApiResponse.ok());
     }
@@ -68,7 +67,7 @@ public class MessageController {
         @Parameter(description = "namespace") @PathVariable String namespace,
         @Parameter(description = "message code") @PathVariable String messageCd,
         @Parameter(description = "language code") @PathVariable String langCd,
-        @RequestBody MessageUpdateRequest request
+        @RequestBody MessageRequest request
     ) {
         messageService.update(namespace, messageCd, langCd, request);
         return ResponseEntity.ok(ApiResponse.ok());
@@ -86,9 +85,9 @@ public class MessageController {
     }
 
     @PostMapping("/bulk")
-    @Operation(summary = "Bulk upsert messages")
-    public ResponseEntity<ApiResponse> bulkUpsert(@RequestBody BulkMessageRequest request) {
-        messageService.bulkUpsert(request);
+    @Operation(summary = "Bulk commit messages")
+    public ResponseEntity<ApiResponse> bulkCommit(@RequestBody BulkMessageRequest request) {
+        messageService.bulkCommit(request);
         return ResponseEntity.ok(ApiResponse.ok());
     }
 

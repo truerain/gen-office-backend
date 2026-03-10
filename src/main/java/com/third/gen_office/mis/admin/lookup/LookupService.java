@@ -8,12 +8,12 @@ import com.third.gen_office.domain.lookup.LookupDetailRepository;
 import com.third.gen_office.global.error.BadRequestException;
 import com.third.gen_office.global.error.ConflictException;
 import com.third.gen_office.global.error.NotFoundException;
-import com.third.gen_office.mis.admin.lookup.dto.LookupMasterCreateRequest;
+import com.third.gen_office.mis.admin.lookup.dto.BulkLookupDetailRequest;
+import com.third.gen_office.mis.admin.lookup.dto.BulkLookupMasterRequest;
+import com.third.gen_office.mis.admin.lookup.dto.LookupDetailRequest;
+import com.third.gen_office.mis.admin.lookup.dto.LookupMasterRequest;
 import com.third.gen_office.mis.admin.lookup.dto.LookupMasterResponse;
-import com.third.gen_office.mis.admin.lookup.dto.LookupMasterUpdateRequest;
-import com.third.gen_office.mis.admin.lookup.dto.LookupDetailCreateRequest;
 import com.third.gen_office.mis.admin.lookup.dto.LookupDetailResponse;
-import com.third.gen_office.mis.admin.lookup.dto.LookupDetailUpdateRequest;
 import com.third.gen_office.mis.common.util.LastUpdatedByResolver;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -71,7 +71,7 @@ public class LookupService {
     }
 
     @Transactional
-    public LookupMasterResponse createMaster(LookupMasterCreateRequest request) {
+    public LookupMasterResponse createMaster(LookupMasterRequest request) {
         validateCreateClassRequest(request);
         String key = request.lkupClssCd().trim();
         if (lookupMasterRepository.existsById(key)) {
@@ -99,9 +99,12 @@ public class LookupService {
     }
 
     @Transactional
-    public LookupMasterResponse updateMaster(String lkupClssCd, LookupMasterUpdateRequest request) {
+    public LookupMasterResponse updateMaster(String lkupClssCd, LookupMasterRequest request) {
         validateClassKey(lkupClssCd);
         validateUpdateClassRequest(request);
+        if (StringUtils.hasText(request.lkupClssCd()) && !lkupClssCd.equals(request.lkupClssCd().trim())) {
+            throw new BadRequestException("lookup.invalid_request");
+        }
         LookupMasterEntity existing = lookupMasterRepository.findById(lkupClssCd)
             .orElseThrow(() -> new NotFoundException("lookup.not_found"));
 
@@ -120,6 +123,40 @@ public class LookupService {
         existing.setAttribute10(request.attribute10());
         lookupMasterRepository.save(existing);
         return getMaster(lkupClssCd);
+    }
+
+    @Transactional
+    public void bulkCommitMasters(BulkLookupMasterRequest request) {
+        if (request == null) {
+            throw new BadRequestException("lookup.invalid_request");
+        }
+
+        List<LookupMasterRequest> creates = request.creates() == null ? List.of() : request.creates();
+        for (LookupMasterRequest item : creates) {
+            if (item == null) {
+                throw new BadRequestException("lookup.invalid_request");
+            }
+            createMaster(item);
+        }
+
+        List<LookupMasterRequest> updates = request.updates() == null ? List.of() : request.updates();
+        for (LookupMasterRequest item : updates) {
+            if (item == null || !StringUtils.hasText(item.lkupClssCd())) {
+                throw new BadRequestException("lookup.invalid_request");
+            }
+            validateUpdateClassRequest(item);
+            updateMaster(item.lkupClssCd(), item);
+        }
+
+        List<LookupMasterRequest> deletes = request.deletes() == null ? List.of() : request.deletes();
+        for (LookupMasterRequest item : deletes) {
+            if (item == null || !StringUtils.hasText(item.lkupClssCd())) {
+                throw new BadRequestException("lookup.invalid_request");
+            }
+            if (!deleteMaster(item.lkupClssCd())) {
+                throw new BadRequestException("lookup.invalid_request");
+            }
+        }
     }
 
     @Transactional(readOnly = true)
@@ -158,7 +195,7 @@ public class LookupService {
     }
 
     @Transactional
-    public LookupDetailResponse createDetail(String lkupClssCd, LookupDetailCreateRequest request) {
+    public LookupDetailResponse createDetail(String lkupClssCd, LookupDetailRequest request) {
         validateClassKey(lkupClssCd);
         validateCreateDetailRequest(request);
         ensureClassExists(lkupClssCd);
@@ -195,11 +232,17 @@ public class LookupService {
     public LookupDetailResponse updateDetail(
         String lkupClssCd,
         String lkupCd,
-        LookupDetailUpdateRequest request
+        LookupDetailRequest request
     ) {
         validateClassKey(lkupClssCd);
         validateDetailKey(lkupCd);
         validateUpdateDetailRequest(request);
+        if (StringUtils.hasText(request.lkupClssCd()) && !lkupClssCd.equals(request.lkupClssCd().trim())) {
+            throw new BadRequestException("lookup.invalid_request");
+        }
+        if (StringUtils.hasText(request.lkupCd()) && !lkupCd.equals(request.lkupCd().trim())) {
+            throw new BadRequestException("lookup.invalid_request");
+        }
 
         LookupDetailId id = new LookupDetailId(lkupClssCd, lkupCd);
         LookupDetailEntity existing = lookupDetailRepository.findById(id)
@@ -223,6 +266,41 @@ public class LookupService {
         lookupDetailRepository.save(existing);
 
         return getDetail(lkupClssCd, lkupCd);
+    }
+
+    @Transactional
+    public void bulkCommitDetails(BulkLookupDetailRequest request) {
+        if (request == null) {
+            throw new BadRequestException("lookup.invalid_request");
+        }
+
+        List<LookupDetailRequest> creates = request.creates() == null ? List.of() : request.creates();
+        for (LookupDetailRequest item : creates) {
+            if (item == null) {
+                throw new BadRequestException("lookup.invalid_request");
+            }
+            validateDetailBulkCreateRequest(item);
+            createDetail(item.lkupClssCd(), item);
+        }
+
+        List<LookupDetailRequest> updates = request.updates() == null ? List.of() : request.updates();
+        for (LookupDetailRequest item : updates) {
+            if (item == null) {
+                throw new BadRequestException("lookup.invalid_request");
+            }
+            validateDetailBulkUpdateRequest(item);
+            updateDetail(item.lkupClssCd(), item.lkupCd(), item);
+        }
+
+        List<LookupDetailRequest> deletes = request.deletes() == null ? List.of() : request.deletes();
+        for (LookupDetailRequest item : deletes) {
+            if (item == null || !StringUtils.hasText(item.lkupClssCd()) || !StringUtils.hasText(item.lkupCd())) {
+                throw new BadRequestException("lookup.invalid_request");
+            }
+            if (!deleteDetail(item.lkupClssCd(), item.lkupCd())) {
+                throw new BadRequestException("lookup.invalid_request");
+            }
+        }
     }
 
     private Specification<LookupMasterEntity> buildMasterSpecification(
@@ -396,7 +474,7 @@ public class LookupService {
         );
     }
 
-    private void validateCreateClassRequest(LookupMasterCreateRequest request) {
+    private void validateCreateClassRequest(LookupMasterRequest request) {
         if (request == null) {
             throw new BadRequestException("lookup.invalid_request");
         }
@@ -404,14 +482,14 @@ public class LookupService {
         validateUseYn(request.useYn());
     }
 
-    private void validateUpdateClassRequest(LookupMasterUpdateRequest request) {
+    private void validateUpdateClassRequest(LookupMasterRequest request) {
         if (request == null) {
             throw new BadRequestException("lookup.invalid_request");
         }
         validateUseYn(request.useYn());
     }
 
-    private void validateCreateDetailRequest(LookupDetailCreateRequest request) {
+    private void validateCreateDetailRequest(LookupDetailRequest request) {
         if (request == null) {
             throw new BadRequestException("lookup.invalid_request");
         }
@@ -420,10 +498,30 @@ public class LookupService {
         validateSortOrder(request.sortOrder());
     }
 
-    private void validateUpdateDetailRequest(LookupDetailUpdateRequest request) {
+    private void validateUpdateDetailRequest(LookupDetailRequest request) {
         if (request == null) {
             throw new BadRequestException("lookup.invalid_request");
         }
+        validateUseYn(request.useYn());
+        validateSortOrder(request.sortOrder());
+    }
+
+    private void validateDetailBulkCreateRequest(LookupDetailRequest request) {
+        if (request == null) {
+            throw new BadRequestException("lookup.invalid_request");
+        }
+        validateClassKey(request.lkupClssCd());
+        validateDetailKey(request.lkupCd());
+        validateUseYn(request.useYn());
+        validateSortOrder(request.sortOrder());
+    }
+
+    private void validateDetailBulkUpdateRequest(LookupDetailRequest request) {
+        if (request == null) {
+            throw new BadRequestException("lookup.invalid_request");
+        }
+        validateClassKey(request.lkupClssCd());
+        validateDetailKey(request.lkupCd());
         validateUseYn(request.useYn());
         validateSortOrder(request.sortOrder());
     }
@@ -483,6 +581,23 @@ public class LookupService {
         if (!lookupMasterRepository.existsById(lkupClssCd)) {
             throw new NotFoundException("lookup.not_found");
         }
+    }
+
+    private boolean deleteMaster(String lkupClssCd) {
+        if (!lookupMasterRepository.existsById(lkupClssCd)) {
+            return false;
+        }
+        lookupMasterRepository.deleteById(lkupClssCd);
+        return true;
+    }
+
+    private boolean deleteDetail(String lkupClssCd, String lkupCd) {
+        LookupDetailId id = new LookupDetailId(lkupClssCd, lkupCd);
+        if (!lookupDetailRepository.existsById(id)) {
+            return false;
+        }
+        lookupDetailRepository.deleteById(id);
+        return true;
     }
 
 }

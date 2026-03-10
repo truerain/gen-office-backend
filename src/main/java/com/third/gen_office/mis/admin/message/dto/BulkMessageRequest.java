@@ -5,5 +5,7 @@ import java.util.List;
 
 @Schema(description = "Bulk message request")
 public record BulkMessageRequest(
-    @Schema(description = "Items") List<MessageCreateRequest> items
+    @Schema(description = "Rows to create") List<MessageRequest> creates,
+    @Schema(description = "Rows to update") List<MessageRequest> updates,
+    @Schema(description = "Rows to delete") List<MessageRequest> deletes
 ) {}

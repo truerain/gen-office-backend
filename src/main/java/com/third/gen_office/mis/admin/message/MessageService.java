@@ -8,11 +8,9 @@ import com.third.gen_office.domain.message.MessageId;
 import com.third.gen_office.domain.message.MessageRepository;
 import com.third.gen_office.global.i18n.DbMessageSource;
 import com.third.gen_office.mis.admin.message.dto.BulkMessageRequest;
-import com.third.gen_office.mis.admin.message.dto.BulkMessageResponse;
-import com.third.gen_office.mis.admin.message.dto.MessageCreateRequest;
 import com.third.gen_office.mis.admin.message.dto.MessageListResponse;
+import com.third.gen_office.mis.admin.message.dto.MessageRequest;
 import com.third.gen_office.mis.admin.message.dto.MessageResponse;
-import com.third.gen_office.mis.admin.message.dto.MessageUpdateRequest;
 import com.third.gen_office.mis.admin.message.dto.MissingMessageItem;
 import com.third.gen_office.mis.admin.message.dto.MissingMessageResponse;
 import java.util.ArrayList;
@@ -74,7 +72,7 @@ public class MessageService {
     }
 
     @Transactional
-    public MessageResponse create(MessageCreateRequest request) {
+    public MessageResponse create(MessageRequest request) {
         validateCreateRequest(request);
         MessageId id = new MessageId(request.messageCd(), request.langCd(), request.namespace());
         if (messageRepository.existsById(id)) {
@@ -92,9 +90,18 @@ public class MessageService {
     }
 
     @Transactional
-    public MessageResponse update(String namespace, String messageCd, String langCd, MessageUpdateRequest request) {
+    public MessageResponse update(String namespace, String messageCd, String langCd, MessageRequest request) {
         validateKey(namespace, messageCd, langCd);
         validateUpdateRequest(request);
+        if (StringUtils.hasText(request.namespace()) && !namespace.equals(request.namespace().trim())) {
+            throw new BadRequestException("message.invalid_request");
+        }
+        if (StringUtils.hasText(request.messageCd()) && !messageCd.equals(request.messageCd().trim())) {
+            throw new BadRequestException("message.invalid_request");
+        }
+        if (StringUtils.hasText(request.langCd()) && !langCd.equals(request.langCd().trim())) {
+            throw new BadRequestException("message.invalid_request");
+        }
         MessageId id = new MessageId(messageCd, langCd, namespace);
         if (!messageRepository.existsById(id)) {
             throw new NotFoundException("message.not_found");
@@ -116,45 +123,36 @@ public class MessageService {
     }
 
     @Transactional
-    public BulkMessageResponse bulkUpsert(BulkMessageRequest request) {
-        if (request == null || request.items() == null || request.items().isEmpty()) {
+    public void bulkCommit(BulkMessageRequest request) {
+        if (request == null) {
             throw new BadRequestException("message.invalid_request");
         }
-        int inserted = 0;
-        int updated = 0;
-        int skipped = 0;
 
-        for (MessageCreateRequest item : request.items()) {
-            validateCreateRequest(item);
-            MessageId id = new MessageId(item.messageCd(), item.langCd(), item.namespace());
-            MessageEntity entity = messageRepository.findById(id).orElse(null);
-            if (entity == null) {
-                MessageEntity created = MessageEntity.builder()
-                    .messageCd(item.messageCd())
-                    .langCd(item.langCd())
-                    .namespace(item.namespace())
-                    .messageTxt(item.messageTxt())
-                    .build();
-                messageRepository.save(created);
-                inserted++;
-                messageSource.evict(item.namespace(), item.messageCd(), item.langCd());
-                continue;
+        List<MessageRequest> creates = request.creates() == null ? List.of() : request.creates();
+        for (MessageRequest item : creates) {
+            if (item == null) {
+                throw new BadRequestException("message.invalid_request");
             }
-            if (item.messageTxt().equals(entity.getMessageTxt())) {
-                skipped++;
-                continue;
-            }
-            messageRepository.updateMessageText(
-                item.namespace(),
-                item.messageCd(),
-                item.langCd(),
-                item.messageTxt()
-            );
-            updated++;
-            messageSource.evict(item.namespace(), item.messageCd(), item.langCd());
+            create(item);
         }
 
-        return new BulkMessageResponse(inserted, updated, skipped);
+        List<MessageRequest> updates = request.updates() == null ? List.of() : request.updates();
+        for (MessageRequest item : updates) {
+            if (item == null) {
+                throw new BadRequestException("message.invalid_request");
+            }
+            validateKey(item.namespace(), item.messageCd(), item.langCd());
+            validateUpdateRequest(item);
+            update(item.namespace(), item.messageCd(), item.langCd(), item);
+        }
+
+        List<MessageRequest> deletes = request.deletes() == null ? List.of() : request.deletes();
+        for (MessageRequest item : deletes) {
+            if (item == null) {
+                throw new BadRequestException("message.invalid_request");
+            }
+            delete(item.namespace(), item.messageCd(), item.langCd());
+        }
     }
 
     @Transactional(readOnly = true)
@@ -254,7 +252,7 @@ public class MessageService {
         return Math.min(size, 200);
     }
 
-    private void validateCreateRequest(MessageCreateRequest request) {
+    private void validateCreateRequest(MessageRequest request) {
         if (request == null) {
             throw new BadRequestException("message.invalid_request");
         }
@@ -264,7 +262,7 @@ public class MessageService {
         }
     }
 
-    private void validateUpdateRequest(MessageUpdateRequest request) {
+    private void validateUpdateRequest(MessageRequest request) {
         if (request == null || !StringUtils.hasText(request.messageTxt())) {
             throw new BadRequestException("message.invalid_request");
         }

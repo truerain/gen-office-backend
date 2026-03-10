@@ -10,6 +10,7 @@ import com.third.gen_office.domain.user.UserRoleRepository;
 import com.third.gen_office.global.error.BadRequestException;
 import com.third.gen_office.global.error.ConflictException;
 import com.third.gen_office.global.error.NotFoundException;
+import com.third.gen_office.mis.admin.userrole.dto.BulkUserRoleRequest;
 import com.third.gen_office.mis.admin.userrole.dto.UserRoleRequest;
 import com.third.gen_office.mis.admin.userrole.dto.UserRoleResponse;
 import java.util.ArrayList;
@@ -129,6 +130,37 @@ public class UserRoleService {
             .orElseThrow(() -> new NotFoundException("user_role.not_found"));
         entity.setUseYn("N");
         userRoleRepository.save(entity);
+    }
+
+    @Transactional
+    public void bulkCommit(BulkUserRoleRequest request) {
+        if (request == null) {
+            throw new BadRequestException("user_role.invalid_request");
+        }
+
+        List<UserRoleRequest> creates = request.creates() == null ? List.of() : request.creates();
+        for (UserRoleRequest item : creates) {
+            if (item == null) {
+                throw new BadRequestException("user_role.invalid_request");
+            }
+            create(item);
+        }
+
+        List<UserRoleRequest> updates = request.updates() == null ? List.of() : request.updates();
+        for (UserRoleRequest item : updates) {
+            if (item == null || item.userId() == null || item.roleId() == null) {
+                throw new BadRequestException("user_role.invalid_request");
+            }
+            update(item.userId(), item.roleId(), item);
+        }
+
+        List<UserRoleRequest> deletes = request.deletes() == null ? List.of() : request.deletes();
+        for (UserRoleRequest item : deletes) {
+            if (item == null || item.userId() == null || item.roleId() == null) {
+                throw new BadRequestException("user_role.invalid_request");
+            }
+            delete(item.userId(), item.roleId());
+        }
     }
 
     private Sort toSort(String sort) {

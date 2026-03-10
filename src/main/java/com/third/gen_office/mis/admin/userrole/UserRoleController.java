@@ -1,6 +1,7 @@
 package com.third.gen_office.mis.admin.userrole;
 
 import com.third.gen_office.global.api.ApiResponse;
+import com.third.gen_office.mis.admin.userrole.dto.BulkUserRoleRequest;
 import com.third.gen_office.mis.admin.userrole.dto.UserRoleRequest;
 import com.third.gen_office.mis.admin.userrole.dto.UserRoleResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -72,6 +73,13 @@ public class UserRoleController {
         @Parameter(description = "role id") @PathVariable Long roleId
     ) {
         userRoleService.delete(userId, roleId);
+        return ResponseEntity.ok(ApiResponse.ok());
+    }
+
+    @PostMapping("/user-roles/bulk")
+    @Operation(summary = "Bulk commit user role mappings")
+    public ResponseEntity<ApiResponse> bulkCommit(@RequestBody BulkUserRoleRequest request) {
+        userRoleService.bulkCommit(request);
         return ResponseEntity.ok(ApiResponse.ok());
     }
 

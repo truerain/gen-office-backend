@@ -1,6 +1,7 @@
 package com.third.gen_office.mis.admin.notice;
 
 import com.third.gen_office.global.api.ApiResponse;
+import com.third.gen_office.mis.admin.notice.dto.BulkNoticeRequest;
 import com.third.gen_office.mis.admin.notice.dto.NoticeRequest;
 import com.third.gen_office.mis.admin.notice.dto.NoticeResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -49,6 +50,13 @@ public class NoticeController {
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse> delete(@PathVariable Integer id) {
         noticeService.deleteNotice(id);
+        return ResponseEntity.ok(ApiResponse.ok());
+    }
+
+    @Operation(summary = "Bulk commit notices")
+    @PostMapping("/bulk")
+    public ResponseEntity<ApiResponse> bulkCommit(@RequestBody BulkNoticeRequest request) {
+        noticeService.bulkCommit(request);
         return ResponseEntity.ok(ApiResponse.ok());
     }
 }

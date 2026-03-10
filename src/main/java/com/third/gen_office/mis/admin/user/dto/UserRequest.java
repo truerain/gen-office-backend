@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "User request DTO")
 public record UserRequest(
+    @Schema(description = "User id") Long userId,
     @Schema(description = "Employee number") String empNo,
     @Schema(description = "Employee name") String empName,
     @Schema(description = "Employee name (English)") String empNameEng,

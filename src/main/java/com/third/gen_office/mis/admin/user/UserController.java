@@ -2,6 +2,7 @@ package com.third.gen_office.mis.admin.user;
 
 import com.third.gen_office.global.api.ApiResponse;
 import com.third.gen_office.global.error.NotFoundException;
+import com.third.gen_office.mis.admin.user.dto.BulkUserRequest;
 import com.third.gen_office.mis.admin.user.dto.UserRequest;
 import com.third.gen_office.mis.admin.user.dto.UserResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -72,6 +73,12 @@ public class UserController {
         if (!userService.delete(id)) {
             throw new NotFoundException("user.not_found");
         }
+        return ResponseEntity.ok(ApiResponse.ok());
+    }
+    @PostMapping("/bulk")
+    @Operation(summary = "Bulk commit users")
+    public ResponseEntity<ApiResponse> bulkCommit(@RequestBody BulkUserRequest request) {
+        userService.bulkCommit(request);
         return ResponseEntity.ok(ApiResponse.ok());
     }
 }
