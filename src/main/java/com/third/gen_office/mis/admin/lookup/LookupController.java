@@ -35,22 +35,24 @@ public class LookupController {
 
     @GetMapping("/masters")
     @Operation(summary = "List lookup masters")
-    public List<LookupMasterResponse> listLkupMaster(
+    public ResponseEntity<ApiResponse<List<LookupMasterResponse>>> listLkupMaster(
         @RequestParam(value = "lkupClssCd", required = false) String lkupClssCd,
         @RequestParam(value = "lkupClssName", required = false) String lkupClssName,
         @RequestParam(value = "useYn", required = false) String useYn,
         @RequestParam(value = "q", required = false) String q,
         @RequestParam(value = "sort", required = false) String sort
     ) {
-        return lookupService.listMasters(lkupClssCd, lkupClssName, useYn, q, sort);
+        return ResponseEntity.ok(
+            ApiResponse.ok(lookupService.listMasters(lkupClssCd, lkupClssName, useYn, q, sort))
+        );
     }
 
     @GetMapping("/masters/{lkupClssCd}")
     @Operation(summary = "Get lookup master")
-    public LookupMasterResponse getClass(
+    public ResponseEntity<ApiResponse<LookupMasterResponse>> getClass(
         @Parameter(description = "lookup class code") @PathVariable String lkupClssCd
     ) {
-        return lookupService.getMaster(lkupClssCd);
+        return ResponseEntity.ok(ApiResponse.ok(lookupService.getMaster(lkupClssCd)));
     }
 
     @PostMapping(value = "/masters", consumes = {
@@ -58,14 +60,14 @@ public class LookupController {
         "application/json;charset=UTF-8"
     })
     @Operation(summary = "Create lookup master")
-    public ResponseEntity<ApiResponse> createNaster(@RequestBody LookupMasterRequest request) {
+    public ResponseEntity<ApiResponse<Void>> createNaster(@RequestBody LookupMasterRequest request) {
         lookupService.createMaster(request);
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
     @PostMapping("/masters/bulk")
     @Operation(summary = "Bulk commit lookup masters")
-    public ResponseEntity<ApiResponse> bulkCommitMasters(@RequestBody BulkLookupMasterRequest request) {
+    public ResponseEntity<ApiResponse<Void>> bulkCommitMasters(@RequestBody BulkLookupMasterRequest request) {
         lookupService.bulkCommitMasters(request);
         return ResponseEntity.ok(ApiResponse.ok());
     }
@@ -75,7 +77,7 @@ public class LookupController {
         "application/json;charset=UTF-8"
     })
     @Operation(summary = "Update lookup master")
-    public ResponseEntity<ApiResponse> updateLkupMaster(
+    public ResponseEntity<ApiResponse<Void>> updateLkupMaster(
         @Parameter(description = "lookup class code") @PathVariable String lkupClssCd,
         @RequestBody LookupMasterRequest request
     ) {
@@ -85,7 +87,7 @@ public class LookupController {
 
     @GetMapping("/{lkupClssCd}/details")
     @Operation(summary = "List lookup details")
-    public List<LookupDetailResponse> listDetails(
+    public ResponseEntity<ApiResponse<List<LookupDetailResponse>>> listDetails(
         @Parameter(description = "lookup class code") @PathVariable String lkupClssCd,
         @RequestParam(value = "lkupCd", required = false) String lkupCd,
         @RequestParam(value = "lkupName", required = false) String lkupName,
@@ -93,21 +95,23 @@ public class LookupController {
         @RequestParam(value = "q", required = false) String q,
         @RequestParam(value = "sort", required = false) String sort
     ) {
-        return lookupService.listDetails(lkupClssCd, lkupCd, lkupName, useYn, q, sort);
+        return ResponseEntity.ok(
+            ApiResponse.ok(lookupService.listDetails(lkupClssCd, lkupCd, lkupName, useYn, q, sort))
+        );
     }
 
     @GetMapping("/{lkupClssCd}/details/{lkupCd}")
     @Operation(summary = "Get lookup detail")
-    public LookupDetailResponse getDetail(
+    public ResponseEntity<ApiResponse<LookupDetailResponse>> getDetail(
         @Parameter(description = "lookup class code") @PathVariable String lkupClssCd,
         @Parameter(description = "lookup code") @PathVariable String lkupCd
     ) {
-        return lookupService.getDetail(lkupClssCd, lkupCd);
+        return ResponseEntity.ok(ApiResponse.ok(lookupService.getDetail(lkupClssCd, lkupCd)));
     }
 
     @PostMapping("/{lkupClssCd}/details")
     @Operation(summary = "Create lookup detail")
-    public ResponseEntity<ApiResponse> createDetail(
+    public ResponseEntity<ApiResponse<Void>> createDetail(
         @Parameter(description = "lookup class code") @PathVariable String lkupClssCd,
         @RequestBody LookupDetailRequest request
     ) {
@@ -117,14 +121,14 @@ public class LookupController {
 
     @PostMapping("/details/bulk")
     @Operation(summary = "Bulk commit lookup details")
-    public ResponseEntity<ApiResponse> bulkCommitDetails(@RequestBody BulkLookupDetailRequest request) {
+    public ResponseEntity<ApiResponse<Void>> bulkCommitDetails(@RequestBody BulkLookupDetailRequest request) {
         lookupService.bulkCommitDetails(request);
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
     @PutMapping("/{lkupClssCd}/details/{lkupCd}")
     @Operation(summary = "Update lookup detail")
-    public ResponseEntity<ApiResponse> updateDetail(
+    public ResponseEntity<ApiResponse<Void>> updateDetail(
         @Parameter(description = "lookup class code") @PathVariable String lkupClssCd,
         @Parameter(description = "lookup code") @PathVariable String lkupCd,
         @RequestBody LookupDetailRequest request

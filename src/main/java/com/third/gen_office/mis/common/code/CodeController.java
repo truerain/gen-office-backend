@@ -1,10 +1,12 @@
 package com.third.gen_office.mis.common.code;
 
 import com.third.gen_office.mis.common.code.dto.CodeDetailResponse;
+import com.third.gen_office.global.api.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,9 +24,9 @@ public class CodeController {
 
     @GetMapping("/{lkupClssCd}")
     @Operation(summary = "List lookup details by class code")
-    public List<CodeDetailResponse> listDetails(
+    public ResponseEntity<ApiResponse<List<CodeDetailResponse>>> listDetails(
         @Parameter(description = "lookup class code") @PathVariable String lkupClssCd
     ) {
-        return codeService.listDetails(lkupClssCd);
+        return ResponseEntity.ok(ApiResponse.ok(codeService.listDetails(lkupClssCd)));
     }
 }

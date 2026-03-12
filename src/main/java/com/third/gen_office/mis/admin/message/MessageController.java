@@ -32,7 +32,7 @@ public class MessageController {
 
     @GetMapping
     @Operation(summary = "List messages")
-    public MessageListResponse list(
+    public ResponseEntity<ApiResponse<MessageListResponse>> list(
         @RequestParam(value = "namespace", required = false) String namespace,
         @RequestParam(value = "langCd", required = false) String langCd,
         @RequestParam(value = "messageCd", required = false) String messageCd,
@@ -41,29 +41,31 @@ public class MessageController {
         @RequestParam(value = "size", required = false, defaultValue = "20") int size,
         @RequestParam(value = "sort", required = false) String sort
     ) {
-        return messageService.list(namespace, langCd, messageCd, q, page, size, sort);
+        return ResponseEntity.ok(
+            ApiResponse.ok(messageService.list(namespace, langCd, messageCd, q, page, size, sort))
+        );
     }
 
     @GetMapping("/{namespace}/{messageCd}/{langCd}")
     @Operation(summary = "Get message")
-    public MessageResponse get(
+    public ResponseEntity<ApiResponse<MessageResponse>> get(
         @Parameter(description = "namespace") @PathVariable String namespace,
         @Parameter(description = "message code") @PathVariable String messageCd,
         @Parameter(description = "language code") @PathVariable String langCd
     ) {
-        return messageService.get(namespace, messageCd, langCd);
+        return ResponseEntity.ok(ApiResponse.ok(messageService.get(namespace, messageCd, langCd)));
     }
 
     @PostMapping
     @Operation(summary = "Create message")
-    public ResponseEntity<ApiResponse> create(@RequestBody MessageRequest request) {
+    public ResponseEntity<ApiResponse<Void>> create(@RequestBody MessageRequest request) {
         messageService.create(request);
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
     @PutMapping("/{namespace}/{messageCd}/{langCd}")
     @Operation(summary = "Update message")
-    public ResponseEntity<ApiResponse> update(
+    public ResponseEntity<ApiResponse<Void>> update(
         @Parameter(description = "namespace") @PathVariable String namespace,
         @Parameter(description = "message code") @PathVariable String messageCd,
         @Parameter(description = "language code") @PathVariable String langCd,
@@ -75,7 +77,7 @@ public class MessageController {
 
     @DeleteMapping("/{namespace}/{messageCd}/{langCd}")
     @Operation(summary = "Delete message")
-    public ResponseEntity<ApiResponse> delete(
+    public ResponseEntity<ApiResponse<Void>> delete(
         @Parameter(description = "namespace") @PathVariable String namespace,
         @Parameter(description = "message code") @PathVariable String messageCd,
         @Parameter(description = "language code") @PathVariable String langCd
@@ -86,19 +88,21 @@ public class MessageController {
 
     @PostMapping("/bulk")
     @Operation(summary = "Bulk commit messages")
-    public ResponseEntity<ApiResponse> bulkCommit(@RequestBody BulkMessageRequest request) {
+    public ResponseEntity<ApiResponse<Void>> bulkCommit(@RequestBody BulkMessageRequest request) {
         messageService.bulkCommit(request);
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
     @GetMapping("/missing")
     @Operation(summary = "List missing translations")
-    public MissingMessageResponse missing(
+    public ResponseEntity<ApiResponse<MissingMessageResponse>> missing(
         @RequestParam(value = "namespace", required = false) String namespace,
         @RequestParam(value = "baseLang", required = false, defaultValue = "ko") String baseLang,
         @RequestParam(value = "targetLang") String targetLang
     ) {
-        return messageService.missing(namespace, baseLang, targetLang);
+        return ResponseEntity.ok(
+            ApiResponse.ok(messageService.missing(namespace, baseLang, targetLang))
+        );
     }
 }
 

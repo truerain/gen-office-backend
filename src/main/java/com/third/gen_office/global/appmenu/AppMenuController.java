@@ -1,6 +1,7 @@
 package com.third.gen_office.global.appmenu;
 
 import com.third.gen_office.domain.menu.AppMenuItem;
+import com.third.gen_office.global.api.ApiResponse;
 import com.third.gen_office.global.error.NotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -24,15 +25,15 @@ public class AppMenuController {
 
     @GetMapping
     @Operation(summary = "List app menus")
-    public List<AppMenuItem> list() {
-        return appMenuService.list();
+    public ResponseEntity<ApiResponse<List<AppMenuItem>>> list() {
+        return ResponseEntity.ok(ApiResponse.ok(appMenuService.list()));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get app menu")
-    public ResponseEntity<AppMenuItem> get(@Parameter(description = "menu id") @PathVariable Long id) {
+    public ResponseEntity<ApiResponse<AppMenuItem>> get(@Parameter(description = "menu id") @PathVariable Long id) {
         AppMenuItem menu = appMenuService.get(id)
             .orElseThrow(() -> new NotFoundException("menu.not_found"));
-        return ResponseEntity.ok(menu);
+        return ResponseEntity.ok(ApiResponse.ok(menu));
     }
 }

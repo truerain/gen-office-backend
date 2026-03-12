@@ -35,6 +35,9 @@ class FileService {
         Integer resolvedFileSetId = resolveFileSetId(fileSetId);
 
         try {
+            Path root = Paths.get(uploadPath).toAbsolutePath().normalize();
+            if (!Files.exists(root)) Files.createDirectories(root);
+
             for (MultipartFile file : files) {
                 if (file.isEmpty()) continue;
 
@@ -42,20 +45,19 @@ class FileService {
                 String extension = StringUtils.getFilenameExtension(originalName);
                 String storedName = UUID.randomUUID().toString() + "." + extension;
 
-                Path root = Paths.get(uploadPath);
-                if (!Files.exists(root)) Files.createDirectories(root);
-
-                Files.copy(file.getInputStream(), root.resolve(storedName), StandardCopyOption.REPLACE_EXISTING);
+                Path storedPath = root.resolve(storedName);
+                Files.copy(file.getInputStream(), storedPath, StandardCopyOption.REPLACE_EXISTING);
 
                 FileEntity fileEntity = new FileEntity(
                         resolvedFileSetId,
                         originalName,
                         storedName,
-                        uploadPath + storedName,
+                        storedPath.toString(),
                         extension,
                         file.getSize(),
                         "SYSTEM"
                 );
+                fileEntity.setUseYn("Y");
                 fileRepository.save(fileEntity);
             }
         } catch (IOException e) {
@@ -72,7 +74,7 @@ class FileService {
     }
 
     public Resource downloadFile(Integer fileSetId, Integer fileId) {
-        FileEntity fileEntity = fileRepository.findByFileSetIdAndFileId(fileSetId, fileId)
+        FileEntity fileEntity = fileRepository.findByFileSetIdAndFileIdAndUseYn(fileSetId, fileId, "Y")
                 .orElseThrow(() -> new RuntimeException("File not found."));
 
         try {
@@ -90,7 +92,15 @@ class FileService {
     }
 
     public List<FileEntity> listFiles(Integer fileSetId) {
-        return fileRepository.findByFileSetId(fileSetId);
+        return fileRepository.findByFileSetIdAndUseYn(fileSetId, "Y");
+    }
+
+    @Transactional
+    public void deleteFile(Integer fileSetId, Integer fileId) {
+        FileEntity fileEntity = fileRepository.findByFileSetIdAndFileIdAndUseYn(fileSetId, fileId, "Y")
+                .orElseThrow(() -> new RuntimeException("File not found."));
+        fileEntity.setUseYn("N");
+        fileRepository.save(fileEntity);
     }
 
     public FileEntity getFileInfo(Integer fileId) {

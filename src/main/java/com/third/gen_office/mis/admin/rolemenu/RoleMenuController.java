@@ -33,35 +33,35 @@ public class RoleMenuController {
 
     @GetMapping
     @Operation(summary = "List role menu mappings")
-    public List<RoleMenuResponse> list(
+    public ResponseEntity<ApiResponse<List<RoleMenuResponse>>> list(
         @Parameter(description = "role id") @RequestParam(required = false) Long roleId,
         @Parameter(description = "menu id") @RequestParam(required = false) Long menuId
     ) {
-        return roleMenuService.list(roleId, menuId);
+        return ResponseEntity.ok(ApiResponse.ok(roleMenuService.list(roleId, menuId)));
     }
 
     @GetMapping("/{roleId}/{menuId}")
     @Operation(summary = "Get role menu mapping")
-    public ResponseEntity<RoleMenuResponse> get(
+    public ResponseEntity<ApiResponse<RoleMenuResponse>> get(
         @Parameter(description = "role id") @PathVariable Long roleId,
         @Parameter(description = "menu id") @PathVariable Long menuId
     ) {
         RoleMenuResponse roleMenu = roleMenuService.get(roleId, menuId)
             .orElseThrow(() -> new NotFoundException("role_menu.not_found"));
-        return ResponseEntity.ok(roleMenu);
+        return ResponseEntity.ok(ApiResponse.ok(roleMenu));
     }
 
     @GetMapping("/view/{roleId}")
     @Operation(summary = "List menus with role mapping")
-    public List<RoleMenuView> listByRole(
+    public ResponseEntity<ApiResponse<List<RoleMenuView>>> listByRole(
         @Parameter(description = "role id") @PathVariable Long roleId
     ) {
-        return roleMenuService.listByRole(roleId);
+        return ResponseEntity.ok(ApiResponse.ok(roleMenuService.listByRole(roleId)));
     }
 
     @PostMapping
     @Operation(summary = "Create role menu mapping")
-    public ResponseEntity<ApiResponse> create(@RequestBody RoleMenuRequest request) {
+    public ResponseEntity<ApiResponse<Void>> create(@RequestBody RoleMenuRequest request) {
         boolean created = roleMenuService.create(request).isPresent();
         if (!created) {
             throw new BadRequestException("role_menu.invalid_request");
@@ -71,7 +71,7 @@ public class RoleMenuController {
 
     @DeleteMapping("/{roleId}/{menuId}")
     @Operation(summary = "Delete role menu mapping")
-    public ResponseEntity<ApiResponse> delete(
+    public ResponseEntity<ApiResponse<Void>> delete(
         @Parameter(description = "role id") @PathVariable Long roleId,
         @Parameter(description = "menu id") @PathVariable Long menuId
     ) {
@@ -83,7 +83,7 @@ public class RoleMenuController {
 
     @PostMapping("/bulk")
     @Operation(summary = "Bulk commit role menu mappings")
-    public ResponseEntity<ApiResponse> bulkCommit(@RequestBody RoleMenuBulkRequest request) {
+    public ResponseEntity<ApiResponse<Void>> bulkCommit(@RequestBody RoleMenuBulkRequest request) {
         roleMenuService.bulkCommit(request);
         return ResponseEntity.ok(ApiResponse.ok());
     }

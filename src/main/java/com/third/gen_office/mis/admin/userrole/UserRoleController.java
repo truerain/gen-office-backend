@@ -30,34 +30,34 @@ public class UserRoleController {
 
     @GetMapping("/user-roles")
     @Operation(summary = "List user role mappings")
-    public java.util.List<UserRoleResponse> list(
+    public ResponseEntity<ApiResponse<java.util.List<UserRoleResponse>>> list(
         @RequestParam(value = "userId", required = false) Long userId,
         @RequestParam(value = "roleId", required = false) Long roleId,
         @RequestParam(value = "useYn", required = false) String useYn,
         @RequestParam(value = "sort", required = false) String sort
     ) {
-        return userRoleService.list(userId, roleId, useYn, sort);
+        return ResponseEntity.ok(ApiResponse.ok(userRoleService.list(userId, roleId, useYn, sort)));
     }
 
     @GetMapping("/user-roles/{userId}/{roleId}")
     @Operation(summary = "Get user role mapping")
-    public UserRoleResponse get(
+    public ResponseEntity<ApiResponse<UserRoleResponse>> get(
         @Parameter(description = "user id") @PathVariable Long userId,
         @Parameter(description = "role id") @PathVariable Long roleId
     ) {
-        return userRoleService.get(userId, roleId);
+        return ResponseEntity.ok(ApiResponse.ok(userRoleService.get(userId, roleId)));
     }
 
     @PostMapping("/user-roles")
     @Operation(summary = "Create user role mapping")
-    public ResponseEntity<ApiResponse> create(@RequestBody UserRoleRequest request) {
+    public ResponseEntity<ApiResponse<Void>> create(@RequestBody UserRoleRequest request) {
         userRoleService.create(request);
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
     @PutMapping("/user-roles/{userId}/{roleId}")
     @Operation(summary = "Update user role mapping")
-    public ResponseEntity<ApiResponse> update(
+    public ResponseEntity<ApiResponse<Void>> update(
         @Parameter(description = "user id") @PathVariable Long userId,
         @Parameter(description = "role id") @PathVariable Long roleId,
         @RequestBody UserRoleRequest request
@@ -68,7 +68,7 @@ public class UserRoleController {
 
     @DeleteMapping("/user-roles/{userId}/{roleId}")
     @Operation(summary = "Delete user role mapping (soft)")
-    public ResponseEntity<ApiResponse> delete(
+    public ResponseEntity<ApiResponse<Void>> delete(
         @Parameter(description = "user id") @PathVariable Long userId,
         @Parameter(description = "role id") @PathVariable Long roleId
     ) {
@@ -78,7 +78,7 @@ public class UserRoleController {
 
     @PostMapping("/user-roles/bulk")
     @Operation(summary = "Bulk commit user role mappings")
-    public ResponseEntity<ApiResponse> bulkCommit(@RequestBody BulkUserRoleRequest request) {
+    public ResponseEntity<ApiResponse<Void>> bulkCommit(@RequestBody BulkUserRoleRequest request) {
         userRoleService.bulkCommit(request);
         return ResponseEntity.ok(ApiResponse.ok());
     }

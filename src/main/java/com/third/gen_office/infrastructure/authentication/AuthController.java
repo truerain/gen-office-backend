@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import com.third.gen_office.infrastructure.authorization.UserPrincipal;
+import com.third.gen_office.global.api.ApiResponse;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -38,7 +39,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(
+    public ResponseEntity<ApiResponse<AuthUserResponse>> login(
         @Valid @RequestBody LoginRequest request,
         HttpServletRequest httpRequest
     ) {
@@ -47,7 +48,7 @@ public class AuthController {
     }
 
     @GetMapping("/tmp-login")
-    public ResponseEntity<?> tmpLogin(
+    public ResponseEntity<ApiResponse<AuthUserResponse>> tmpLogin(
         @RequestParam("empNo") String empNo,
         @RequestParam("pass") String pass,
         HttpServletRequest httpRequest
@@ -56,32 +57,32 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public Map<String, String> logout(
+    public ResponseEntity<ApiResponse<Map<String, String>>> logout(
         HttpServletRequest request,
         HttpServletResponse response,
         Authentication authentication
     ) {
         new SecurityContextLogoutHandler().logout(request, response, authentication);
-        return Map.of("message", "logout");
+        return ResponseEntity.ok(ApiResponse.ok(Map.of("message", "logout")));
     }
 
     @GetMapping("/me")
-    public AuthUserResponse me(@AuthenticationPrincipal UserPrincipal principal) {
-        return AuthUserResponse.from(principal);
+    public ResponseEntity<ApiResponse<AuthUserResponse>> me(@AuthenticationPrincipal UserPrincipal principal) {
+        return ResponseEntity.ok(ApiResponse.ok(AuthUserResponse.from(principal)));
     }
 
     @GetMapping("/csrf")
-    public Map<String, String> csrf(HttpServletRequest request) {
+    public ResponseEntity<ApiResponse<Map<String, String>>> csrf(HttpServletRequest request) {
         CsrfToken token = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
         log.info("try to csrf: " + token.getToken());
-        return Map.of(
+        return ResponseEntity.ok(ApiResponse.ok(Map.of(
             "token", token.getToken(),
             "headerName", token.getHeaderName(),
             "parameterName", token.getParameterName()
-        );
+        )));
     }
 
-    private ResponseEntity<?> authenticateAndCreateSession(
+    private ResponseEntity<ApiResponse<AuthUserResponse>> authenticateAndCreateSession(
         String empNo,
         String password,
         HttpServletRequest httpRequest
@@ -94,7 +95,7 @@ public class AuthController {
         } catch (AuthenticationException ex) {
             log.warn("login_failed empNo={} ip={}", empNo, httpRequest.getRemoteAddr());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(Map.of("message", "invalid_credentials"));
+                .body(ApiResponse.failure("auth.invalid_credentials", "invalid_credentials"));
         }
 
         SecurityContext context = SecurityContextHolder.createEmptyContext();
@@ -117,6 +118,6 @@ public class AuthController {
             principal.getEmpNo(),
             principal.getUserId(),
             httpRequest.getRemoteAddr());
-        return ResponseEntity.ok(AuthUserResponse.from(principal));
+        return ResponseEntity.ok(ApiResponse.ok(AuthUserResponse.from(principal)));
     }
 }

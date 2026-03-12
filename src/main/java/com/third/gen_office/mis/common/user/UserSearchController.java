@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+import com.third.gen_office.global.api.ApiResponse;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,9 +23,9 @@ public class UserSearchController {
 
     @GetMapping
     @Operation(summary = "Search users for popup")
-    public List<UserSearchResponse> search(
+    public ResponseEntity<ApiResponse<List<UserSearchResponse>>> search(
         @Parameter(description = "Search text (empName)") @RequestParam(value = "q", required = false) String q
     ) {
-        return userSearchService.search(q);
+        return ResponseEntity.ok(ApiResponse.ok(userSearchService.search(q)));
     }
 }

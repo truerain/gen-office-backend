@@ -24,25 +24,25 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ApiException.class)
-    public ResponseEntity<ApiResponse> handleApiException(
+    public ResponseEntity<ApiResponse<?>> handleApiException(
         ApiException ex,
         HttpServletRequest request
     ) {
         Locale locale = LocaleContextHolder.getLocale();
         String message = messageSource.getMessage(ex.getMessageKey(), null, ex.getMessageKey(), locale);
-        ApiResponse response = ApiResponse.failure(ex.getCode(), message);
+        ApiResponse<?> response = ApiResponse.failure(ex.getCode(), message);
         return ResponseEntity.status(ex.getStatus()).body(response);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse> handleUnexpectedException(
+    public ResponseEntity<ApiResponse<?>> handleUnexpectedException(
         Exception ex,
         HttpServletRequest request
     ) {
         log.error("Unhandled exception for {} {}", request.getMethod(), request.getRequestURI(), ex);
         Locale locale = LocaleContextHolder.getLocale();
         String message = messageSource.getMessage(DEFAULT_MESSAGE_KEY, null, DEFAULT_MESSAGE_KEY, locale);
-        ApiResponse response = ApiResponse.failure(HttpStatus.INTERNAL_SERVER_ERROR.name(), message);
+        ApiResponse<?> response = ApiResponse.failure(HttpStatus.INTERNAL_SERVER_ERROR.name(), message);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 }

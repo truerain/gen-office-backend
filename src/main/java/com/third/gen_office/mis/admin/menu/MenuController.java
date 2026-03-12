@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "Menu", description = "메뉴 관리 API")
+@Tag(name = "Menu", description = "Menu management API")
 @RestController
 @RequestMapping("/api/menus")
 public class MenuController {
@@ -30,36 +30,40 @@ public class MenuController {
     }
 
     @GetMapping
-    @Operation(summary = "메뉴 목록 조회")
-    public List<MenuResponse> list() {
-        return menuService.list();
+    @Operation(summary = "List menus")
+    public ResponseEntity<ApiResponse<List<MenuResponse>>> list() {
+        return ResponseEntity.ok(ApiResponse.ok(menuService.list()));
     }
 
     @GetMapping("/submenu/{id}")
-    @Operation(summary = "하위 메뉴 목록 조회")
-    public List<MenuResponse> childMenu(@Parameter(description = "상위 메뉴 ID") @PathVariable Long id) {
-        return menuService.childMenu(id);
+    @Operation(summary = "List submenu items")
+    public ResponseEntity<ApiResponse<List<MenuResponse>>> childMenu(
+        @Parameter(description = "Parent menu ID") @PathVariable Long id
+    ) {
+        return ResponseEntity.ok(ApiResponse.ok(menuService.childMenu(id)));
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "메뉴 단건 조회")
-    public ResponseEntity<MenuResponse> get(@Parameter(description = "메뉴 ID") @PathVariable Long id) {
+    @Operation(summary = "Get menu")
+    public ResponseEntity<ApiResponse<MenuResponse>> get(
+        @Parameter(description = "Menu ID") @PathVariable Long id
+    ) {
         MenuResponse menu = menuService.get(id)
             .orElseThrow(() -> new NotFoundException("menu.not_found"));
-        return ResponseEntity.ok(menu);
+        return ResponseEntity.ok(ApiResponse.ok(menu));
     }
 
     @PostMapping
-    @Operation(summary = "메뉴 생성")
-    public ResponseEntity<ApiResponse> create(@RequestBody MenuRequest request) {
+    @Operation(summary = "Create menu")
+    public ResponseEntity<ApiResponse<Void>> create(@RequestBody MenuRequest request) {
         menuService.create(request);
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "메뉴 수정")
-    public ResponseEntity<ApiResponse> update(
-        @Parameter(description = "메뉴 ID") @PathVariable Long id,
+    @Operation(summary = "Update menu")
+    public ResponseEntity<ApiResponse<Void>> update(
+        @Parameter(description = "Menu ID") @PathVariable Long id,
         @RequestBody MenuRequest request
     ) {
         menuService.update(id, request)
@@ -68,8 +72,8 @@ public class MenuController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "메뉴 삭제")
-    public ResponseEntity<ApiResponse> delete(@Parameter(description = "메뉴 ID") @PathVariable Long id) {
+    @Operation(summary = "Delete menu")
+    public ResponseEntity<ApiResponse<Void>> delete(@Parameter(description = "Menu ID") @PathVariable Long id) {
         if (!menuService.delete(id)) {
             throw new NotFoundException("menu.not_found");
         }
@@ -77,8 +81,8 @@ public class MenuController {
     }
 
     @PostMapping("/bulk")
-    @Operation(summary = "메뉴 일괄 저장")
-    public ResponseEntity<ApiResponse> bulkCommit(@RequestBody MenuBulkRequest request) {
+    @Operation(summary = "Bulk commit menus")
+    public ResponseEntity<ApiResponse<Void>> bulkCommit(@RequestBody MenuBulkRequest request) {
         menuService.bulkCommit(request);
         return ResponseEntity.ok(ApiResponse.ok());
     }

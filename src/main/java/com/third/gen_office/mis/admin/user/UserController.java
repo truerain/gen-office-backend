@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "User", description = "?ъ슜??愿由?API")
+@Tag(name = "User", description = "User management API")
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -31,34 +31,34 @@ public class UserController {
     }
 
     @GetMapping
-    @Operation(summary = "?ъ슜??紐⑸줉 議고쉶")
-    public List<UserResponse> list(
-        @Parameter(description = "?ъ썝紐?寃??遺遺꾩씪移?") @RequestParam(required = false) String empName
+    @Operation(summary = "List users")
+    public ResponseEntity<ApiResponse<List<UserResponse>>> list(
+        @Parameter(description = "Employee name") @RequestParam(required = false) String empName
     ) {
         if (empName == null || empName.isBlank()) {
-            return userService.list();
+            return ResponseEntity.ok(ApiResponse.ok(userService.list()));
         }
-        return userService.listByEmpName(empName);
+        return ResponseEntity.ok(ApiResponse.ok(userService.listByEmpName(empName)));
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "?ъ슜???④굔 議고쉶")
-    public ResponseEntity<UserResponse> get(@Parameter(description = "user id") @PathVariable Long id) {
+    @Operation(summary = "Get user")
+    public ResponseEntity<ApiResponse<UserResponse>> get(@Parameter(description = "user id") @PathVariable Long id) {
         UserResponse userEntity = userService.get(id)
             .orElseThrow(() -> new NotFoundException("user.not_found"));
-        return ResponseEntity.ok(userEntity);
+        return ResponseEntity.ok(ApiResponse.ok(userEntity));
     }
 
     @PostMapping
-    @Operation(summary = "?ъ슜???앹꽦")
-    public ResponseEntity<ApiResponse> create(@RequestBody UserRequest request) {
+    @Operation(summary = "Create user")
+    public ResponseEntity<ApiResponse<Void>> create(@RequestBody UserRequest request) {
         userService.create(request);
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "?ъ슜???섏젙")
-    public ResponseEntity<ApiResponse> update(
+    @Operation(summary = "Update user")
+    public ResponseEntity<ApiResponse<Void>> update(
         @Parameter(description = "user id") @PathVariable Long id,
         @RequestBody UserRequest request
     ) {
@@ -68,18 +68,18 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "?ъ슜????젣")
-    public ResponseEntity<ApiResponse> delete(@Parameter(description = "user id") @PathVariable Long id) {
+    @Operation(summary = "Delete user")
+    public ResponseEntity<ApiResponse<Void>> delete(@Parameter(description = "user id") @PathVariable Long id) {
         if (!userService.delete(id)) {
             throw new NotFoundException("user.not_found");
         }
         return ResponseEntity.ok(ApiResponse.ok());
     }
+
     @PostMapping("/bulk")
     @Operation(summary = "Bulk commit users")
-    public ResponseEntity<ApiResponse> bulkCommit(@RequestBody BulkUserRequest request) {
+    public ResponseEntity<ApiResponse<Void>> bulkCommit(@RequestBody BulkUserRequest request) {
         userService.bulkCommit(request);
         return ResponseEntity.ok(ApiResponse.ok());
     }
 }
-

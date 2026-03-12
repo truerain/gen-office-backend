@@ -33,36 +33,36 @@ public class RoleController {
 
     @GetMapping
     @Operation(summary = "List roles")
-    public List<RoleResponse> list() {
-        return roleService.list();
+    public ResponseEntity<ApiResponse<List<RoleResponse>>> list() {
+        return ResponseEntity.ok(ApiResponse.ok(roleService.list()));
     }
 
     @GetMapping("/options")
     @Operation(summary = "List role options for select")
-    public List<RoleOptionResponse> listOptions(
+    public ResponseEntity<ApiResponse<List<RoleOptionResponse>>> listOptions(
         @RequestParam(value = "useYn", required = false, defaultValue = "Y") String useYn
     ) {
-        return roleService.listOptions(useYn);
+        return ResponseEntity.ok(ApiResponse.ok(roleService.listOptions(useYn)));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get role")
-    public ResponseEntity<RoleResponse> get(@Parameter(description = "role id") @PathVariable Long id) {
+    public ResponseEntity<ApiResponse<RoleResponse>> get(@Parameter(description = "role id") @PathVariable Long id) {
         RoleResponse role = roleService.get(id)
             .orElseThrow(() -> new NotFoundException("role.not_found"));
-        return ResponseEntity.ok(role);
+        return ResponseEntity.ok(ApiResponse.ok(role));
     }
 
     @PostMapping
     @Operation(summary = "Create role")
-    public ResponseEntity<ApiResponse> create(@RequestBody RoleRequest request) {
+    public ResponseEntity<ApiResponse<Void>> create(@RequestBody RoleRequest request) {
         roleService.create(request);
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update role")
-    public ResponseEntity<ApiResponse> update(
+    public ResponseEntity<ApiResponse<Void>> update(
         @Parameter(description = "role id") @PathVariable Long id,
         @RequestBody RoleRequest request
     ) {
@@ -73,7 +73,7 @@ public class RoleController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete role")
-    public ResponseEntity<ApiResponse> delete(@Parameter(description = "role id") @PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> delete(@Parameter(description = "role id") @PathVariable Long id) {
         if (!roleService.delete(id)) {
             throw new NotFoundException("role.not_found");
         }
@@ -82,7 +82,7 @@ public class RoleController {
 
     @PostMapping("/bulk")
     @Operation(summary = "Bulk commit roles")
-    public ResponseEntity<ApiResponse> bulkCommit(@RequestBody RoleBulkRequest request) {
+    public ResponseEntity<ApiResponse<Void>> bulkCommit(@RequestBody RoleBulkRequest request) {
         roleService.bulkCommit(request);
         return ResponseEntity.ok(ApiResponse.ok());
     }

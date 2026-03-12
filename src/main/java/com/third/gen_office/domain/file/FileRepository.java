@@ -12,7 +12,15 @@ public interface FileRepository extends JpaRepository<FileEntity, Integer> {
     // 공지사항 상세 조회 시 이 메서드를 사용해 파일 목록을 불러옵니다.
     List<FileEntity> findByFileSetId(Integer fileSetId);
 
+    List<FileEntity> findByFileSetIdAndUseYn(Integer fileSetId, String useYn);
+
     java.util.Optional<FileEntity> findByFileSetIdAndFileId(Integer fileSetId, Integer fileId);
+
+    java.util.Optional<FileEntity> findByFileSetIdAndFileIdAndUseYn(
+            Integer fileSetId,
+            Integer fileId,
+            String useYn
+    );
 
     // 필요 시 세트에 속한 파일들을 한꺼번에 삭제 (게시글 삭제 시)
     void deleteByFileSetId(Integer fileSetId);

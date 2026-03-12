@@ -36,4 +36,4 @@ loggin:
 
 file:
   upload:
-    path: D:/60 Development/100 gen-office/upload
+    path: ./data/upload
