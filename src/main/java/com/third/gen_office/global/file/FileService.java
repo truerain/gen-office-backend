@@ -26,49 +26,43 @@ import java.util.UUID;
 @RequiredArgsConstructor
 class FileService {
     private final FileSetRepository fileSetRepository;
-
-    private final FileRepository fileRepository; // domain의 레포지토리 사용
+    private final FileRepository fileRepository;
 
     @Value("${file.upload.path}")
     private String uploadPath;
 
-    public Integer uploadFiles(List<MultipartFile> files) {
-        // 1. 새로운 file_set_id 생성 (실무에선 시퀀스나 UUID를 숫자로 변환하여 사용)
-        // 여기선 간단히 현재 시간을 활용한 예시를 사용합니다.
-        Integer fileSetId = createFileSetId();
+    public Integer uploadFiles(List<MultipartFile> files, Integer fileSetId) {
+        Integer resolvedFileSetId = resolveFileSetId(fileSetId);
 
         try {
             for (MultipartFile file : files) {
                 if (file.isEmpty()) continue;
 
-                // 2. 파일명 중복 방지를 위한 저장용 이름 생성
                 String originalName = file.getOriginalFilename();
                 String extension = StringUtils.getFilenameExtension(originalName);
                 String storedName = UUID.randomUUID().toString() + "." + extension;
 
-                // 3. 물리적 폴더 생성 및 파일 복사
                 Path root = Paths.get(uploadPath);
                 if (!Files.exists(root)) Files.createDirectories(root);
 
                 Files.copy(file.getInputStream(), root.resolve(storedName), StandardCopyOption.REPLACE_EXISTING);
 
-                // 4. DB 정보 기록 (domain/file/FileEntity 사용)
                 FileEntity fileEntity = new FileEntity(
-                        fileSetId,
+                        resolvedFileSetId,
                         originalName,
                         storedName,
                         uploadPath + storedName,
                         extension,
                         file.getSize(),
-                        "SYSTEM" // 실제론 인증된 유저명 주입
+                        "SYSTEM"
                 );
                 fileRepository.save(fileEntity);
             }
         } catch (IOException e) {
-            throw new RuntimeException("파일 저장 중 오류가 발생했습니다.", e);
+            throw new RuntimeException("File upload failed.", e);
         }
 
-        return fileSetId;
+        return resolvedFileSetId;
     }
 
     @Transactional
@@ -77,9 +71,9 @@ class FileService {
         return fileSetEntity.getFileSetId();
     }
 
-    public Resource downloadFile(Integer fileId) {
-        FileEntity fileEntity = fileRepository.findById(fileId)
-                .orElseThrow(() -> new RuntimeException("파일 정보를 찾을 수 없습니다."));
+    public Resource downloadFile(Integer fileSetId, Integer fileId) {
+        FileEntity fileEntity = fileRepository.findByFileSetIdAndFileId(fileSetId, fileId)
+                .orElseThrow(() -> new RuntimeException("File not found."));
 
         try {
             Path file = Paths.get(fileEntity.getFilePath());
@@ -88,18 +82,29 @@ class FileService {
             if (resource.exists() || resource.isReadable()) {
                 return resource;
             } else {
-                throw new RuntimeException("파일을 읽을 수 없습니다.");
+                throw new RuntimeException("File is not readable.");
             }
         } catch (MalformedURLException e) {
-            throw new RuntimeException("파일 경로가 잘못되었습니다.", e);
+            throw new RuntimeException("Invalid file path.", e);
         }
     }
 
-    /**
-     * 파일 상세 정보 조회 (Controller에서 파일명 추출용)
-     */
+    public List<FileEntity> listFiles(Integer fileSetId) {
+        return fileRepository.findByFileSetId(fileSetId);
+    }
+
     public FileEntity getFileInfo(Integer fileId) {
         return fileRepository.findById(fileId)
-                .orElseThrow(() -> new RuntimeException("파일이 존재하지 않습니다."));
+                .orElseThrow(() -> new RuntimeException("File not found."));
+    }
+
+    private Integer resolveFileSetId(Integer fileSetId) {
+        if (fileSetId == null) {
+            return createFileSetId();
+        }
+        if (!fileSetRepository.existsById(fileSetId)) {
+            throw new RuntimeException("File set not found.");
+        }
+        return fileSetId;
     }
 }

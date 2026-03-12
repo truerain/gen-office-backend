@@ -28,6 +28,7 @@ public class NoticeService {
         NoticeEntity noticeEntity = NoticeEntity.builder()
                 .title(request.getTitle())
                 .content(request.getContent())
+                .fileSetId(request.getFileSetId())
                 .popupYn(request.getPopupYn() != null ? request.getPopupYn() : "N")
                 .useYn(request.getUseYn() != null ? request.getUseYn() : "Y")
                 .dispStartDate(request.getDispStartDate())
@@ -81,6 +82,10 @@ public class NoticeService {
 
         noticeEntity.setTitle(request.getTitle());
         noticeEntity.setContent(request.getContent());
+
+        if (request.getFileSetId() != null) {
+            noticeEntity.setFileSetId(request.getFileSetId());
+        }
 
         if (request.getDispStartDate() != null) {
             noticeEntity.setDispStartDate(request.getDispStartDate());

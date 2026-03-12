@@ -1,17 +1,16 @@
 package com.third.gen_office.mis.admin.notice.dto;
 
 import com.third.gen_office.domain.notice.NoticeEntity;
-import jakarta.persistence.Column;
-import jakarta.validation.constraints.Pattern;
 
 /**
  * DTO for {@link NoticeEntity}
  */
 public class NoticeResponse {
-    // 1. 목록 조회용: 본문(content)을 제외하여 전송량 최소화
+    // 1. List view excludes content
     public record ListDto(
             Integer noticeId,
             String title,
+            Integer fileSetId,
             String dispStartDate,
             String dispEndDate,
             String popupYn,
@@ -24,6 +23,7 @@ public class NoticeResponse {
             return new ListDto(
                     entity.getNoticeId(),
                     entity.getTitle(),
+                    entity.getFileSetId(),
                     entity.getDispStartDate(),
                     entity.getDispEndDate(),
                     entity.getPopupYn(),
@@ -35,11 +35,12 @@ public class NoticeResponse {
         }
     }
 
-    // 2. 상세 조회용
+    // 2. Detail view
     public record DetailDto(
             Integer noticeId,
             String title,
             String content,
+            Integer fileSetId,
             String dispStartDate,
             String dispEndDate,
             String popupYn,
@@ -53,6 +54,7 @@ public class NoticeResponse {
                     entity.getNoticeId(),
                     entity.getTitle(),
                     entity.getContent(),
+                    entity.getFileSetId(),
                     entity.getDispStartDate(),
                     entity.getDispEndDate(),
                     entity.getPopupYn(),
