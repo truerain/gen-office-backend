@@ -1,5 +1,7 @@
 package com.third.gen_office.mis.admin.notice;
 
+import com.third.gen_office.domain.file.FileEntity;
+import com.third.gen_office.domain.file.FileRepository;
 import com.third.gen_office.domain.notice.NoticeEntity;
 import com.third.gen_office.global.error.BadRequestException;
 import com.third.gen_office.mis.admin.notice.dto.BulkNoticeRequest;
@@ -19,6 +21,21 @@ import com.third.gen_office.domain.notice.NoticeRepository;
 public class NoticeService {
 
     private final NoticeRepository noticeRepository;
+    private final FileRepository fileRepository;
+
+    private String getFilenames(Integer fileSetId) {
+        if (fileSetId == null) {
+            return "";
+        }
+        List<FileEntity> files = fileRepository.findByFileSetId(fileSetId);
+        if (files.isEmpty()) {
+            return "";
+        }
+        if (files.size() == 1) {
+            return files.get(0).getOriginalFileName();
+        }
+        return files.get(0).getOriginalFileName() + " 외 " + (files.size() - 1) + "개";
+    }
 
     /**
      * 공지사항 등록
@@ -61,7 +78,7 @@ public class NoticeService {
     public List<NoticeResponse.ListDto> findAll() {
 
         return noticeRepository.findAll().stream()
-                .map(NoticeResponse.ListDto::from)
+                .map(this::toListResponse)
                 .toList();
     }
 
@@ -72,7 +89,7 @@ public class NoticeService {
         NoticeEntity noticeEntity = noticeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("공지사항이 없습니다."));
 
-        return NoticeResponse.DetailDto.from(noticeEntity);
+        return toDetailResponse(noticeEntity);
     }
 
     @Transactional
@@ -155,6 +172,38 @@ public class NoticeService {
             }
             deleteNotice(noticeId);
         }
+    }
+
+    private NoticeResponse.ListDto toListResponse(NoticeEntity entity) {
+        return new NoticeResponse.ListDto(
+                entity.getNoticeId(),
+                entity.getTitle(),
+                entity.getFileSetId(),
+                getFilenames(entity.getFileSetId()),
+                entity.getDispStartDate(),
+                entity.getDispEndDate(),
+                entity.getPopupYn(),
+                entity.getUseYn(),
+                entity.getReadCount(),
+                entity.getLastUpdatedBy(),
+                entity.getLastUpdatedDate() == null ? null : entity.getLastUpdatedDate().toString()
+        );
+    }
+
+    private NoticeResponse.DetailDto toDetailResponse(NoticeEntity entity) {
+        return new NoticeResponse.DetailDto(
+                entity.getNoticeId(),
+                entity.getTitle(),
+                entity.getContent(),
+                entity.getFileSetId(),
+                entity.getDispStartDate(),
+                entity.getDispEndDate(),
+                entity.getPopupYn(),
+                entity.getUseYn(),
+                entity.getReadCount(),
+                entity.getLastUpdatedBy(),
+                entity.getLastUpdatedDate() == null ? null : entity.getLastUpdatedDate().toString()
+        );
     }
 }
 
