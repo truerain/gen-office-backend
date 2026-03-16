@@ -1,0 +1,29 @@
+package com.third.gen_office.mis.co.actuals.dto;
+
+public record CoActualResponse(
+    String acctCd,
+    String acctName,
+    Integer acctLevel,
+    String parentCd,
+    String drCr,
+    String fiscalYr,
+    String fiscalPrd,
+    String orgCd,
+    Double currActAmt,
+    Double planAmt,
+    Double prevActAmt,
+    String attribute1,
+    String attribute2,
+    String attribute3,
+    String attribute4,
+    String attribute5,
+    String attribute6,
+    String attribute7,
+    String attribute8,
+    String attribute9,
+    String attribute10,
+    String createdBy,
+    String creationDate,
+    String lastUpdatedBy,
+    String lastUpdatedDate
+) {}

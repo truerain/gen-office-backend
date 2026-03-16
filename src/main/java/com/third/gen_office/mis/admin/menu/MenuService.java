@@ -11,6 +11,7 @@ import java.util.Optional;
 import com.third.gen_office.mis.admin.menu.dto.MenuRequest;
 import com.third.gen_office.mis.admin.menu.dto.MenuResponse;
 import com.third.gen_office.mis.common.util.LastUpdatedByResolver;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +28,7 @@ public class MenuService {
     }
 
     public List<MenuResponse> list() {
-        List<MenuEntity> entities = menuRepository.findAll();
+        List<MenuEntity> entities = menuRepository.findAll(Sort.by(Sort.Order.asc("sortOrder")));
         Map<String, String> updatedByNames = lastUpdatedByResolver.loadLastUpdatedByNames(entities);
 
         return entities.stream()
@@ -36,7 +37,7 @@ public class MenuService {
     }
 
     public List<MenuResponse> childMenu(Long id) {
-        List<MenuEntity> entities = menuRepository.findByParentMenuId(id);
+        List<MenuEntity> entities = menuRepository.findByParentMenuIdOrderBySortOrderAscMenuIdAsc(id);
         Map<String, String> updatedByNames = lastUpdatedByResolver.loadLastUpdatedByNames(entities);
 
         return entities
