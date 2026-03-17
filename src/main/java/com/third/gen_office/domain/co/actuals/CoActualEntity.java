@@ -52,6 +52,42 @@ public class CoActualEntity extends BaseEntity {
     @Column(name = "prev_act_amt")
     private Double prevActAmt;
 
+    @Column(name = "m01")
+    private Double m01;
+
+    @Column(name = "m02")
+    private Double m02;
+
+    @Column(name = "m03")
+    private Double m03;
+
+    @Column(name = "m04")
+    private Double m04;
+
+    @Column(name = "m05")
+    private Double m05;
+
+    @Column(name = "m06")
+    private Double m06;
+
+    @Column(name = "m07")
+    private Double m07;
+
+    @Column(name = "m08")
+    private Double m08;
+
+    @Column(name = "m09")
+    private Double m09;
+
+    @Column(name = "m10")
+    private Double m10;
+
+    @Column(name = "m11")
+    private Double m11;
+
+    @Column(name = "m12")
+    private Double m12;
+
     @Column(name = "attribute1")
     private String attribute1;
 
